@@ -1,0 +1,15 @@
+.closed{
+    background-color: #dc3545;
+    color: white;
+    height: fit-content;
+    padding:2px;
+    border-radius: 2px;
+  }
+
+  .type{
+    color:black;
+  }
+
+  ::ng-deep .mat-card{
+    box-shadow: none;
+  }

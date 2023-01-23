@@ -1,0 +1,329 @@
+<div
+  fxLayout="column"
+  fxFlexFill
+  [ngClass]="{ 'dispute-dark-theme': isDarkThemeActive }"
+>
+  <mat-toolbar
+    color="primary"
+    class="mat-elevation-z8 p-0"
+    fxLayout="row"
+    fxLayoutAlign="start stretch"
+    style="z-index: 2; height: 3em"
+  >
+    <button mat-button (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <button
+      style="font-size: 15px; margin-left: -1.5em; font-weight: 600"
+      mat-button
+      routerLinkActive="router-link-active"
+    >
+      <img
+        src="../../../../assets/enat_bank.png"
+        alt=""
+        width="25"
+        height="25"
+      />
+      Dispute Management
+    </button>
+
+    <!-- <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px" class="pl-3">
+      <span fxHide fxShow.xs>FX: XS</span>
+      <span fxHide fxShow.sm>FX: SM</span>
+      <span fxHide fxShow.md>FX: MD</span>
+      <span fxHide fxShow.lg>FX: LG</span>
+      <span fxHide fxShow.xl>FX: XL</span>
+    </div> -->
+
+    <span fxFlex></span>
+
+    <div fxLayout="row" fxShow="false" fxShow.gt-sm style="margin-right: 1em">
+      <button mat-button>
+        <mat-slide-toggle
+          color="accent"
+          [(ngModel)]="isDarkThemeActive"
+          (change)="storeThemeSelection()"
+        >
+        </mat-slide-toggle>
+        <mat-icon style="margin-right: 0.3em; margin-left: 0.3em"
+          >settings_brightness</mat-icon
+        >{{ hide ? "Light" : "Dark" }}
+      </button>
+
+      <button mat-button [matMenuTriggerFor]="notification">
+        <mat-icon
+          [matBadgeHidden]="(allNotifications$ | async) == 0"
+          [matBadge]="allNotifications$ | async"
+          matBadgeColor="warn"
+          [matBadgeDisabled]="isBadgeDisabled"
+          (click)="isBadgeDisabled = !isBadgeDisabled"
+          >notifications</mat-icon
+        >
+      </button>
+
+      <mat-menu #notification="matMenu" class="notification-menu">
+        <mat-toolbar
+          color="primary"
+          style="
+            height: 2.5em;
+            margin-top: -0.39em;
+            position: fixed;
+            z-index: 1000;
+          "
+          (click)="onClick($event)"
+          class="search-results"
+        >
+          <button
+            mat-icon-button
+            class="example-icon"
+            aria-label="Example icon-button with menu icon"
+          >
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <span style="font-size: 16px">Notifications</span>
+        </mat-toolbar>
+
+        <!-- all nots -->
+        <mat-nav-list
+          style="padding-top: 3em"
+          class="search-results"
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollThrottle]="50"
+          [scrollWindow]="false"
+          (scrolled)="onScrollDown()"
+        >
+          <mat-list>
+            <div *ngFor="let not of allNotifications">
+              <mat-list-item
+              (click)="onNavigateToRequestDetails(not.id, not?.disputeRequest?.id)"
+                [ngClass]="{ newNotification: not?.status === 'unread' }"
+                style="
+                  margin-bottom: 0.6em;
+                  height: fit-content;
+                  padding-top: 0.1em;
+                  padding-bottom: 0.1em;
+                "
+              >
+                <div class="with-icon">
+                  <mat-icon style="padding-right: 1.5em"
+                    >account_circle</mat-icon
+                  ><span class="aligned-with-icon">
+                    Dear <span style="color: green"> {{ userName }}</span>
+                    {{ not?.content }}</span
+                  >
+                </div>
+              </mat-list-item>
+            </div>
+          </mat-list>
+        </mat-nav-list>
+        <!-- maker -->
+    
+      </mat-menu>
+      <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon style="margin-right: 0.2em">account_circle</mat-icon>
+        <span>{{ fullName }}</span
+        ><span
+          style="
+            background-color: white;
+            color: #3f51b5;
+            padding-right: 5px;
+            padding-left: 5px;
+            margin-left: 5px;
+            padding-top: 3px;
+            padding-bottom: 2px;
+            border-radius: 2px;
+          "
+          >{{ branchName }}</span
+        >
+      </button>
+      <mat-menu
+        #menu="matMenu"
+        xPosition="after"
+        style="margin-left: 2em !important"
+      >
+   
+        <button
+          mat-menu-item
+          (click)="onLogOut()"
+          style="width: 200px; color: #c51162"
+        >
+          <mat-icon>power_settings_new</mat-icon>
+          <span>Sign out of DMS</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+
+  <mat-drawer-container
+    fxFlex
+    autosize
+    class="mat-app-background example-container"
+  >
+    <mat-drawer #drawer mode="side" opened="true">
+      <div fxLayout="column">
+        <button
+          mat-button
+          style="border: none; color: #3f51b5"
+          routerLinkActive="active"
+          routerLink="/dashboard"
+          routerLinkActive="selected no-border txt-bold"
+          fxLayoutAlign="start"
+          class="py-2 pr-5"
+        >
+          <mat-icon class="mr-2" color="primary">dashboard</mat-icon>Dashboard
+        </button>
+
+
+       <!-- Ebanking View -->
+        <mat-list style="width: 100%"  *ngIf="hasEbankingUserRole() || hasDisputeDBAdminRole()">
+          <mat-list-item 
+            style="
+              border-radius: 0;
+              color: #3f51b5;
+              font-size: 14px;
+              font-weight: 500;
+            "
+            (click)="showMenu = !showMenu"
+          >
+            <mat-icon mat-list-icon >notes</mat-icon> Dispute Requests
+              <mat-icon id="menu-button" [ngClass]="{ rotated: showMenu }"
+                >expand_more</mat-icon
+              >
+            <!-- </button> -->
+          </mat-list-item>
+          <div
+            class="submenu"
+            [ngClass]="{ expanded: showMenu }"
+            style="background-color: #eeeeee; width: 100%"
+          >
+            <mat-list-item
+            *ngFor="let item of listItems" (click)="handleClick(item)"
+              class="showlistitem"
+              [routerLink]="item.link" 
+              routerLinkActive="selected no-border txt-bold"
+              ><mat-icon style="margin-right: 0.2em">{{item.icon}}</mat-icon>  {{item.linkTitle}}
+              </mat-list-item
+            >
+          </div>
+        </mat-list>
+        <!-- end of Ebanking view -->
+
+        <!-- Approver View -->
+        <mat-list style="width: 100%"  *ngIf="hasDisputeApproverRole()">
+          <mat-list-item 
+            style="
+              border-radius: 0;
+              color: #3f51b5;
+              font-size: 14px;
+              font-weight: 500;
+            "
+            (click)="showMenu = !showMenu"
+          >
+            <mat-icon mat-list-icon >notes</mat-icon> Dispute Requests
+              <mat-icon id="menu-button" [ngClass]="{ rotated: showMenu }"
+                >expand_more</mat-icon
+              >
+            <!-- </button> -->
+          </mat-list-item>
+          <div
+            class="submenu"
+            [ngClass]="{ approver: showMenu }"
+            style="background-color: #eeeeee; width: 100%"
+          >
+            <mat-list-item
+            *ngFor="let item of approverView" (click)="handleClick(item)"
+              class="showlistitem"
+              [routerLink]="item.link" 
+              routerLinkActive="selected no-border txt-bold"
+              ><mat-icon style="margin-right: 0.2em">{{item.icon}}</mat-icon>  {{item.linkTitle}}
+              </mat-list-item
+            >
+          </div>
+        </mat-list>
+
+        <!-- End of approver view -->
+          <mat-list style="width: 100%"  *ngIf="hasDisputeInitiatorRole()">
+          <mat-list-item 
+            style="
+              border-radius: 0;
+              color: #3f51b5;
+              font-size: 14px;
+              font-weight: 500;
+            "
+            (click)="showMenu = !showMenu"
+          >
+            <mat-icon mat-list-icon>notes</mat-icon> Dispute Requests
+            <button
+              mat-button
+              style="border-radius: 0; color: #3f51b5; font-size: 12px;"
+              class="nav-link"
+              routerLinkActive="active"
+              routerLinkActive="selected no-border txt-bold"
+              fxLayoutAlign="start"
+              class="py-3 pr-5"
+            >
+              <mat-icon class="menu-button" [ngClass]="{ rotated: showMenu }"
+                >expand_more</mat-icon
+              >
+            </button>
+          </mat-list-item>
+          <div
+            class="submenu"
+            [ngClass]="{ expandedbranch: showMenu }"
+            style="background-color: #eeeeee; width: 100%"
+          >
+            <mat-list-item
+              class="showlistitem"
+              *ngIf="hasDisputeInitiatorRole()"
+              routerLink="/request/history"
+              routerLinkActive="selected no-border txt-bold"
+              ><mat-icon style="margin-right: 0.2em">bookmark</mat-icon
+              >Requested Disputes</mat-list-item
+            >
+            <mat-list-item
+              class="showlistitem"
+              *ngIf="hasDisputeInitiatorRole()"
+              routerLink="/assigned-requests"
+              routerLinkActive="selected no-border txt-bold"
+              ><mat-icon style="margin-right: 0.2em">move_to_inbox</mat-icon
+              >Assigned Requests</mat-list-item
+            >
+          </div>
+        </mat-list>
+     
+     
+        <!-- *ngIf="(activeUserRole$ | async) == 'ROLE_BANKING'" -->
+        <button
+        *ngIf="hasDisputeApproverRole() || hasDisputeDBAdminRole() || hasEbankingUserRole()"
+          style="border-radius: 0; color: #3f51b5"
+          mat-button
+          routerLinkActive="active"
+          routerLinkActive="selected no-border txt-bold"
+          routerLink="/direct-requests"
+          fxLayoutAlign="start"
+          class="py-2 pr-5"
+        >
+          <mat-icon color="primary" class="mr-2">domain</mat-icon>Other Bank Disputes
+        </button>
+
+        <button
+        *ngIf="hasDisputeSystemAdminRole()"
+        style="border-radius: 0; color: #3f51b5"
+          mat-button
+          routerLink="/banks-summary"
+          routerLinkActive="selected no-border txt-bold"
+          fxLayoutAlign="start"
+          class="py-2 pr-5"
+        >
+          <mat-icon color="primary" class="mr-2">account_balance</mat-icon>Bank
+          Management
+        </button>
+      </div>
+    </mat-drawer>
+    <div style="display: inline">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-container>
+</div>

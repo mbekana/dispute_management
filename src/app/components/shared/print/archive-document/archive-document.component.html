@@ -1,0 +1,174 @@
+<div fxLayout="row" class="noprint">
+    <button class="doNotPrint" (click)="onPrint()" style="float:right;" mat-raised-button>
+    <mat-icon style="margin-right: 0.2em">print</mat-icon>Print
+  </button>
+  </div>
+
+
+<div *ngIf="(dataFromComponent?.requestType === 'NOT_FOUND_ON_SETTLEMENT')" class="printable">
+    <div id="print-section">
+    <div class="details" fxLayout="row" fxLayoutAlign="center center" >
+        <div fxLayout="row">
+            <div fxLayout="column" fxLayoutAlign="center center" style="line-height: -0.4;">
+                <h2 >ENAT BANK S.C</h2>
+                <h3 style="margin-top: -0.5em;">E-BANKING</h3>
+                <h4 style="margin-top: -0.5em;">Transaction Dispute Form</h4>
+            </div>
+        </div>
+    
+    </div>
+    
+    <div fxLayout="row" fxLayoutAlign="start center" style="margin-top: 2em;margin-bottom: 2em;">
+      <div fxLayout="column" fxFlex="50" >
+        <div fxLayout="row" *ngIf="dataFromComponent?.requestType === 'ENAT_ON_OTHER_BANK'">
+          <p style="margin-right: 2em;"><span style="font-weight: 600;">Fe Number: </span> {{dataFromComponent.feNumber }}</p>
+        </div>
+        <div fxLayout="row" *ngIf="dataFromComponent?.requestType === 'ENAT_ON_OTHER_BANK'">
+    
+          <p style="margin-right: 2em;"><span style="font-weight: 600;">Dispute Id: </span> {{dataFromComponent.disputeId }}</p>
+        </div>
+      </div>
+      <div fxLayout="column" fxFlex="50" >
+        <div fxLayout="row" style="text-align: right;justify-content:flex-end;">
+          <p style="margin-right: 2em;"><span style="font-weight: 600;">Case Opened On: </span> {{dataFromComponent.createAt | date:'mediumDate'}}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 1em;">
+    <div fxLayout="column" fxFlex="50">
+      <table class="mat-table">
+        <thead>
+          <tr style="height: 30px;">
+            <th class="mat-header-cell">Name:</th>
+            <td class="mat-cell" style="width: 400px;">
+             {{dataFromComponent?.requesterName | titlecase}}
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="height: 30px;">
+            <th class="mat-header-cell" style="width: 200px;">Card No:</th>
+            <td class="mat-cell" style="width: 350px;">
+              {{dataFromComponent?.cardNumber}}
+            </td>
+          </tr>
+        </tbody>  
+          </table>
+          <table class="mat-table">
+    
+        <thead>
+          <tr style="height: 30px;">
+            <th class="mat-header-cell">Account Number:</th>
+            <td class="mat-cell" >
+              {{dataFromComponent?.accountNumber}}
+            </td>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="height: 30px;">
+            <th class="mat-header-cell">Address:</th>
+            <td class="mat-cell" >
+             {{dataFromComponent?.address}}
+            </td>
+          </tr>
+        </tbody>
+          </table>
+    </div>
+    
+    <div fxLayout="column" fxFlex="50">
+      <table class="mat-table">
+      <thead>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Transacion Date :</th>
+          <td class="mat-cell" >
+            {{dataFromComponent?.transactionDate | date : "mediumDate"}}
+          </td>
+          
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Bank | ATM:</th>
+          <td class="mat-cell" >
+            {{dataFromComponent?.bankTerminal?.bankName | titlecase}}
+          </td>
+        </tr>
+      </tbody>
+      
+    </table>
+    <table  class="mat-table">
+      <tbody>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Transaction Time:</th>
+          <td class="mat-cell" >
+            <span *ngIf="!dataFromComponent?.transactionTime">Not provided</span>
+            <span *ngIf="dataFromComponent?.transactionTime">{{dataFromComponent?.transactionTime}}</span>
+          </td>
+        </tr>
+      </tbody>
+      <thead>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Cr. Amount:</th>
+          <td class="mat-cell">
+            {{miscellaneousData | json}}
+          </td>
+        </tr>
+      </thead>
+    </table>
+    </div>
+    </div>
+    
+    <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 4em;margin-bottom:2em;"> 
+      <div fxLayout="column" fxFlex="50" >
+        <p><span>Verified By: </span> {{dataFromComponent?.createdBy | titlecase}}</p>
+      </div>
+      <div fxLayout="column" fxFlex="50" >
+        <p><span >Received By: </span> {{dataFromComponent?.receivedBy | titlecase}}</p>
+      </div>
+    </div>
+    
+    <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 2em;margin-bottom:2em;" > 
+      <div style="width:80%">
+        <h2>Feedback Histories</h2>
+        <hr>
+        <div class="search-results"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        [scrollWindow]="false"
+        (scrolled)="onScrollDown()">
+          <span *ngFor="let comment of comments">
+            <div style="background-color: #E0E0E0;height: fit-content;margin-bottom:1em;border-radius: 4px;">
+              <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;color: #0277BD;">
+                {{comment?.senderId | titlecase}}</p>
+              <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;">{{comment.content}}</p>
+              <div fxLayout="row">
+                <p fxLayout="row" style="color:#546E7A;padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;" *ngIf="comment?.status === 'delivered'">
+                  delivered<mat-icon inline style="margin-left: 0.5em;">done</mat-icon>
+                </p>
+                <p fxLayout="row" style="color:#2e7d32;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;" *ngIf="comment?.status === 'seen'">
+                  Seen<mat-icon inline style="margin-left: 0.5em;">done_all</mat-icon>
+                </p>
+                <p style="color:#ad1457;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;">{{comment?.lastModifiedDate | date : 'mediumDate'}}</p>
+                <!-- <button style="color: #0277BD" *ngIf="comments" mat-button color="default"
+                  (click)="onReplyingToComment()">Edit</button> -->
+              
+              </div>
+       
+            </div>
+          </span>
+          <!-- <mat-spinner class="center" diameter="40" color="accent" *ngIf="isInfiniteScrollLoading"></mat-spinner> -->
+    
+        </div>
+        <div fxLayout="row" style="flex: 1 1 auto">
+          <mat-divier></mat-divier>
+        </div>
+      </div>
+    
+    </div>
+    
+    </div>
+    </div>

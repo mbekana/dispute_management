@@ -1,0 +1,45 @@
+
+
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import '@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// **Be sure that you only ever include this mixin once!**
+@include mat-core();
+
+// Define the default theme (same as the example above).
+$frontend-app-primary: mat-palette($mat-indigo);
+$frontend-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$frontend-app-warn: mat-palette($mat-red);
+$frontend-app-theme:   mat-light-theme((
+  color: (
+    primary: $frontend-app-primary,
+    accent: $frontend-app-accent,
+    warn: $frontend-app-warn,
+  )
+));
+
+// Include the default theme styles (color and default density)
+@include angular-material-theme($frontend-app-theme);
+
+
+// Define an alternate dark theme.
+$frontend-dark-primary: mat-palette($mat-blue-grey);
+$frontend-dark-accent:  mat-palette($mat-green, A200, A100, A400);
+$frontend-dark-warn:    mat-palette($mat-deep-orange);
+$frontend-dark-theme:   mat-dark-theme((
+  color: (
+    primary: $frontend-dark-primary,
+    accent: $frontend-dark-accent,
+    warn: $frontend-dark-warn,
+  )
+));
+
+// Include the dark color styles inside of a block with a CSS class. You can make this
+// CSS class whatever you want. In this example, any component inside of an element with
+// `.unicorn-dark-theme` will be affected by this alternate dark theme instead of the default theme.
+.dispute-dark-theme {
+  @include angular-material-color($frontend-dark-theme);
+}

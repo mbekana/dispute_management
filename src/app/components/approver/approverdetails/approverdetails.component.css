@@ -1,0 +1,63 @@
+
+
+  @media print {
+
+     .printable{
+        background-color: white;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
+     }
+
+     #printTable{
+        width: 85% !important;
+     }
+
+     #printText{
+        width: 85% !important;
+     }
+     
+     #memoPrint{
+       margin-top:-4em !important;
+
+     }
+
+     p{
+        font-size: 0.75rem;
+     }
+
+    @page { size: A4 portrait;}
+
+    table {
+        /* margin: 20px 0px 10px 0px;
+        padding: 0px;
+        border-collapse:collapse;
+        border-spacing: 0px;
+        width: 100%; */
+        border: 1px solid #c5c5c5;
+        }
+        thead th { 
+            text-align: left; 
+            /* padding: 2px 5px;  */
+            /* border: 1px solid red; */
+        }
+
+        tr{
+            /* border: 1px solid red; */
+        }
+
+        .noprint {
+            visibility: hidden;
+            margin: 0 !important;
+            padding: 0 !important;
+            top: 0 !important;
+         }
+        
+}
+  

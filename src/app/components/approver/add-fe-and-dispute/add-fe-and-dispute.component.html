@@ -1,0 +1,85 @@
+<div >
+  <h1 mat-dialog-title>Hi {{userName| titlecase}}:</h1>
+<p style="margin-top: -1em;color:#0277BD">Please enter the details below!</p>
+<mat-divider style="margin-bottom: 2em;"></mat-divider>
+<div mat-dialog-content  *ngIf="!decline && !payerBranch">
+  <form [formGroup]="receiveRequestForm">
+    <mat-form-field appearance="legacy" style="width:100%;">
+      <mat-label>Fe Number </mat-label>
+      <input matInput placeholder="Fe Number" formControlName="feNumber">
+      <mat-error *ngIf="controlName.feNumber.errors?.minlength">
+        Fe Number should be at least 8 in length.
+      </mat-error>
+      <mat-error *ngIf="controlName.feNumber.errors?.required">
+        Fe Number is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+      <mat-form-field appearance="legacy" style="width: 100%;margin-top: 1em;">
+      <mat-label>Dispute Id</mat-label>
+      <input matInput placeholder="Dispute Id" formControlName="disputeId">
+      <mat-error *ngIf="controlName.disputeId?.errors?.minlength">
+        Dispute Id should be at least 8 in length.
+      </mat-error>
+      <mat-error *ngIf="controlName.disputeId.errors?.required">
+        Dispute Id is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions style="float:right; margin-top: 1em;"  *ngIf="!decline && !payerBranch">
+  <button mat-button (click)="onNoClick()" color="warn"> No Thanks</button>
+  <button mat-raised-button cdkFocusInitial color="default" (click)="onSaveFeAndDisputeNumber()">Save</button>
+</div>
+</div>
+
+<div mat-dialog-content  *ngIf="decline">
+  <form [formGroup]="declineRequestForm">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Please Provide Status</mat-label>
+      <mat-select formControlName="status" required>
+        <mat-option>--</mat-option>
+        <mat-option  value="REVERSED">
+          REVERSED
+        </mat-option>
+        <mat-option  value="DECLINED">
+          DECLINE
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="declineFormControls.status.errors?.required">You must provide request status to decline this request!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="legacy" style="width:100%;">
+      <mat-label>Leave a Remark</mat-label>
+      <textarea matInput placeholder="Start Typing Remark..." formControlName="remark"></textarea>
+      <mat-error *ngIf="declineFormControls.remark.errors?.required">
+        Remark is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions style="float:right; margin-top: 1em;"  *ngIf="decline">
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="onDeclineRequest()" >Decline and Save</button>
+</div>
+
+
+
+
+
+<!-- <div mat-dialog-content  *ngIf="payerBranch">
+  <form [formGroup]="addPayerBranchForm" style="width: 100%;">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Please Provide Payer Branch</mat-label>
+      <mat-select formControlName="payerBranch" required>
+        <mat-option>--</mat-option>
+        <mat-option *ngFor="let branch of branches$ | async" [value]="branch.id">
+          {{ branch.branchName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="payerBranchControls.payerBranch.errors?.required">You must provide Payer Branch for this request!</mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions style="float:right; margin-top: 1em;"  *ngIf="payerBranch">
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="onSavePayerBranch()" >Save Your Changes</button>
+</div> -->

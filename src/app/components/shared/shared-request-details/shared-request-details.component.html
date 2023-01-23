@@ -1,0 +1,839 @@
+<mat-toolbar
+  color="primary"
+  class="py-5 mb-4"
+  style="width: 100%; display: flex; height: 5.5em"
+>
+  <span>
+    <h1>Request Details</h1>
+  </span>
+</mat-toolbar>
+<mat-progress-bar
+  style="margin-top: -2em"
+  *ngIf="!isLoaded"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+
+<div *ngIf="!isLoaded">
+  <p
+    style="color: #dc3545; margin-left: 0.5em; font-size: 14px; margin-top: 5em"
+  >
+    Loading...
+  </p>
+</div>
+
+<div
+  style="margin-bottom: 3em; width: 85%; margin-left: 100px; margin-top: 30px"
+  *ngIf="isLoaded"
+>
+  <div class="row">
+    <div class="col-6">
+      <div class="row" style="width: 100%">
+        <div class="col-4">
+          <h2>Request Details</h2>
+        </div>
+        <div class="col-8" style="display: flex">
+          <!-- <button [hidden]="requesterDetails?.received || getRoles() === 'ROLE_APPROVER' || getRoles() === 'ROLE_DBA' || getRoles() === 'ROLE_USER'" mat-raised-button color="warn" style="
+              height: fit-content;
+              width: min-content;
+              margin-right: 0.9em;
+              padding-left: 0.3em;
+            ">
+            <mat-icon style="vertical-align: middle">delete_forever</mat-icon>
+            <span style="vertical-align: middle; padding-top: 3px !important">Delete</span>
+          </button> -->
+
+          <!-- [hidden]="
+          requesterDetails?.received ||
+          getRoles() === 'ROLE_APPROVER' ||
+          getRoles() === 'ROLE_DBA' ||
+          getRoles() === 'ROLE_USER'
+        " -->
+          <button
+        [hidden]="
+            requesterDetails?.received ||
+            hasDisputeApproverRole() ||
+            hasDisputeDBAdminRole() ||
+            hasDisputeInitiatorRole()
+          " 
+            mat-raised-button
+            color="warn"
+            aria-label="Example icon button with a heart icon"
+            style="
+              height: fit-content;
+              width: min-content;
+              margin-right: 0.9em;
+              background-color: brown;
+              color: white;
+              padding-left: 0.3em;
+            "
+            (click)="onDeclineRequest()"
+          >
+            <mat-icon style="vertical-align: middle">close</mat-icon>
+            <span style="vertical-align: middle; padding-left: 4px"
+              >Decline</span
+            >
+          </button>
+
+
+          <!-- *ngIf="getRoles() === 'ROLE_APPROVER'" -->
+          <button
+         *ngIf="hasDisputeApproverRole()" 
+            mat-raised-button
+            color="primary"
+            [hidden]="requesterDetails?.approved"
+            (click)="onApproveRequest(requesterDetails?.id)"
+            style="height: fit-content; margin-right: 1em"
+            
+          >
+            <mat-icon style="margin-right: 0.2em">check_circle</mat-icon>Approve
+          </button>
+          <!-- *ngIf="getRoles() === 'ROLE_BANKING'" -->
+          <button
+          *ngIf="hasEbankingUserRole()"
+            mat-raised-button
+            color="primary"
+            [hidden]="requesterDetails?.received"
+            (click)="onDecideReceive(requesterDetails?.requestType)"
+            style="height: fit-content; margin-right: 1em"
+            
+            [disabled]="requesterDetails?.approved == true"
+          >
+            <mat-icon style="margin-right: 0.2em">add_task</mat-icon>Receive
+          </button>
+
+          <!-- [hidden]="((getRoles() !== 'ROLE_BANKING' )  || !requesterDetails?.received || requesterDetails?.requestType === 'OTHER_BANK_ON_ENAT')" -->
+
+          <!-- [hidden]="
+          getRoles() !== 'ROLE_BANKING' ||
+          requesterDetails?.received ||
+          requesterDetails?.requestType === 'NOT_FOUND_ON_SETTLEMENT'
+        " -->
+          <button
+           [hidden]="
+          !hasEbankingUserRole() || requesterDetails?.requestType === 'NOT_FOUND_ON_SETTLEMENT' || requesterDetails?.received
+        "
+            style="
+              height: fit-content;
+              background-color: #ad1457;
+              margin-right: 0.5em;
+              padding-right: 2em;
+            "
+            mat-raised-button
+            (click)="onMarkAsNoSettlementDocument()"
+            color="primary"
+          >
+            <mat-icon>style</mat-icon>
+            Not Found?
+          </button>
+
+<!-- 
+          [hidden]="
+          getRoles() !== 'ROLE_BANKING' ||
+          !requesterDetails?.received ||
+          requesterDetails?.acknowledged
+        "
+        [disabled]="requesterDetails?.failedMachineName" -->
+          <button
+          
+            [hidden]="
+            !hasEbankingUserRole() ||
+            !requesterDetails?.received ||
+            requesterDetails?.acknowledged ||
+            requesterDetails?.requestType !== 'ENAT_ENAT'
+          "
+          [disabled]="requesterDetails?.failedMachineName" 
+            style="height: fit-content; background-color: #006064"
+            mat-raised-button
+            (click)="onAddMiscellaneous()"
+            color="primary"
+          >
+            <mat-icon>add_circle</mat-icon>
+            On Us Memo 
+          </button>
+
+
+          <!-- [hidden]="
+          getRoles() !== 'ROLE_BANKING' ||
+          requesterDetails?.acknowledged
+        " -->
+          <button
+         *ngIf="
+            hasEbankingUserRole() && 
+            (requesterDetails?.acknowledged ||
+            requesterDetails?.received)
+          " 
+            style="
+              height: fit-content;
+              background-color: #6a1b9a;
+              margin-left: 0.5em;
+            "
+            mat-raised-button
+            color="primary"
+
+            [matMenuTriggerFor]="menu" #menuTrigger
+          >
+            <mat-icon>add_alert</mat-icon>
+            Acknowledge
+          </button>
+
+
+          <mat-menu #menu="matMenu" >
+            <mat-card class="example-card" style="box-shadow: none;" (click)="preventPropagation($event)">
+              <mat-card-header>
+                <mat-icon style="color:white; background-color:#dc3545;vertical-align: middle;padding: 8px;"
+                mat-card-avatar >add</mat-icon>
+                <mat-card-title>Please pick settlement date!</mat-card-title>
+                <mat-card-subtitle> Reach out to support team for inconviniences!</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <form [formGroup]="settlemntDateForm">
+                  <mat-form-field color="accent" appearance="fill">
+                    <mat-label>Inherited calendar color</mat-label>
+                    <input formControlName="settlementDate" matInput [matDatepicker]="picker1">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>    
+                </form>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-raised-button color="primary"  (click)="onAcknowledgeRequest()">Save Changes</button>
+              </mat-card-actions>
+            </mat-card>
+            </mat-menu>
+            
+        <button
+        *ngIf="((hasDisputeInitiatorRole() && (requesterDetails?.requestType === 'ENAT_ENAT') && requesterDetails?.status ==='APPROVED') || ((hasDisputeDBAdminRole() && ((requesterDetails?.requestType === 'NOT_FOUND_ON_SETTLEMENT') || (requesterDetails?.requestType === 'ENAT_ON_OTHER_BANK')))) && requesterDetails?.status === 'APPROVED')"
+       
+         style="
+            height: fit-content;
+            background-color: #212121;
+            margin-left: 0.5em
+          "
+          mat-raised-button
+          color="primary"
+          (click)="onConfirmSettlement(requesterDetails?.id)"
+        >
+          <mat-icon>adjust</mat-icon>
+          Confirm Settlement
+        </button>
+
+          <!-- <button
+          [hidden]="!requesterDetails?.approved"
+          *ngIf="hasDisputeDBAdminRole()" 
+            mat-raised-button
+            color="primary"
+            style="height: fit-content; margin-left: 0.5em"
+            
+            (click)="onOPenPrint()"
+          >
+            <mat-icon style="margin-right: 0.2em">print</mat-icon>Print
+          </button> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-6"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-7" style="padding-right: 1em">
+      <div
+        class="row"
+        style="
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+            rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+        "
+      >
+        <div class="col-6">
+          <!-- name -->
+          <mat-list style="margin-bottom: -2em">
+            <mat-list style="display: inline-block">
+              <h3 matSubheader style="color: #0d6efd">Requester Details</h3>
+              <mat-list-item>
+                <!-- <mat-icon matListIcon>Ekim</mat-icon> -->
+                <h4 matLine>Card Holder Name</h4>
+                <p matLine matSubheader>
+                  {{ requesterDetails?.cardHolderName | titlecase }}
+                </p>
+              </mat-list-item>
+              <!-- <mat-divider></mat-divider> -->
+            </mat-list>
+          </mat-list>
+
+          <!--Bank-->
+          <mat-list style="margin-bottom: -2em">
+            <mat-list style="display: inline-block">
+              <!-- <h3 matSubheader>Requester Details</h3> -->
+              <mat-list-item>
+                <!-- <mat-icon matListIcon>Ekim</mat-icon> -->
+                <h4 matLine>Bank</h4>
+                <p matLine matSubheader>
+                  {{ requesterDetails?.bankTerminal?.name | titlecase }}
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-list>
+
+          <!-- Branch -->
+          <mat-list *ngIf="requesterDetails?.requestInitiatorBranch">
+            <mat-list style="display: inline-block">
+              <!-- <h3 matSubheader>Requester Details</h3> -->
+              <mat-list-item>
+                <!-- <mat-icon matListIcon>Ekim</mat-icon> -->
+                <h4 matLine>Branch</h4>
+                <p matLine matSubheader>
+                  {{ requesterDetails?.terminalOwnerBranch  }}
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-list>
+        </div>
+        <div class="col-6">
+          <!-- card -->
+          <mat-list style="margin-bottom: -2em">
+            <mat-list style="display: inline-block">
+              <h3 matSubheader></h3>
+              <mat-list-item>
+                <!-- <mat-icon matListIcon></mat-icon> -->
+                <h4 matLine>Card Number</h4>
+                <p matLine matSubheader>{{ requesterDetails?.cardNumber }}</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-list>
+
+          <!-- acc number -->
+          <mat-list style="margin-bottom: -2em">
+            <mat-list style="display: inline-block">
+              <!-- <h3 matSubheader></h3> -->
+              <mat-list-item>
+                <!-- <mat-icon matListIcon></mat-icon> -->
+                <h4 matLine>Account Number</h4>
+                <p matLine matSubheader>
+                  {{ requesterDetails?.accountNumber }}
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-list>
+
+          <!-- date -->
+          <mat-list>
+            <mat-list style="display: inline-block">
+              <!-- <h3 matSubheader></h3> -->
+              <mat-list-item>
+                <!-- <mat-icon matListIcon></mat-icon> -->
+                <h4 matLine>Transaction Date</h4>
+                <p matLine matSubheader>
+                  {{ requesterDetails?.transactionDate | date: "mediumDate" }}
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-list>
+        </div>
+      </div>
+
+      <div class="row">
+        <h2 style="margin-top: 2em">Other Details</h2>
+        <table mat-table [dataSource]="requests" class="mat-elevation-z2">
+          <!-- Position Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>No.</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.id }}
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="approvedBy">
+            <th mat-header-cell *matHeaderCellDef>Approved By</th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.approvedBy">{{ element.approvedBy }}</span>
+              <span *ngIf="!element.approvedBy"><code>pending...</code></span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdBy">
+            <th mat-header-cell *matHeaderCellDef>Created By</th>
+            <td mat-cell *matCellDef="let element">{{ element.createdBy }}</td>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="telephone">
+            <th mat-header-cell *matHeaderCellDef>Telephone</th>
+            <td mat-cell *matCellDef="let element">{{ element.telephone }}</td>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="transcationAmount">
+            <th mat-header-cell *matHeaderCellDef>Transcation Amount</th>
+            <td mat-cell *matCellDef="let element">
+              <code>{{
+                element.transactionAmount | currency: "ETH ":"code"
+              }}</code>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <!-- </div> -->
+      </div>
+    </div>
+
+    <!-- tab -->
+    <div class="col-5" style="padding-left: 40px">
+      <mat-tab-group
+        backgroundColor="primary"
+        animationDuration="200ms"
+        dynamicHeight="true"
+        style="
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+            rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+        "
+      >
+        <!-- 2 -->
+
+        <!-- *ngIf="getRoles() === 'ROLE_BANKING'" -->
+        <mat-tab label="Attach Ej" 
+         *ngIf="hasEbankingUserRole()"
+        >
+          <div class="row">
+            <div class="col-7" style="align-items: flex-start; float: left">
+              <div class="container">
+                <h2 style="margin-bottom: 0; margin-top: 1em; padding: 0">
+                  Attach Ej
+                </h2>
+                <p
+                  matSubheader
+                  style="margin-left: -1em; margin-top: 0em; padding-top: 0em"
+                  class="isSettled"
+                >
+                  Please upload Ej File in pdf format!
+                </p>
+              </div>
+            </div>
+
+            <!-- <div class="col-5" style="margin: auto">
+              <mat-form-field appearance="legacy">
+                <mat-label>Payer Branch</mat-label>
+                <mat-select
+                  name="payerBranchEj"
+                  id="payerBranchEj"
+                  [(ngModel)]="payerBranchEj"
+                >
+                  <mat-option *ngFor="let br of branch" [value]="br.id">
+                    {{ br.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div> -->
+          </div>
+
+          <mat-list
+            style="
+              align-items: center;
+              background-color: white;
+              box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+                rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+            "
+          >
+            <mat-divider></mat-divider>
+
+            <div style="margin-left: 3em; margin-top: 1em">
+              <form [formGroup]="uploadEjForm">
+                <div
+                  id="container"
+                  appDnd
+                  (fileDropped)="onEjFileDropped($event)"
+                >
+                  <input
+                    type="file"
+                    #fileDropRefEj
+                    id="fileDropRef"
+                    (change)="ejFileBrowseHandler($event)"
+                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="63"
+                    height="64"
+                    viewBox="0 0 63 64"
+                  >
+                    <g fill="#3B454F" fill-rule="nonzero">
+                      <path
+                        d="M42.656 15.135a1.953 1.953 0 0 1-1.391-.578L31.5 4.795l-9.765 9.762a1.97 1.97 0 1 1-2.785-2.785L30.106.616a1.97 1.97 0 0 1 2.785 0l11.157 11.156a1.97 1.97 0 0 1-1.392 3.363z"
+                      />
+                      <path
+                        d="M31.5 36.791a1.97 1.97 0 0 1-1.969-1.969V2.01a1.97 1.97 0 0 1 3.938 0v32.812a1.97 1.97 0 0 1-1.969 1.969z"
+                      />
+                      <path
+                        d="M55.781 63.041H7.22A7.225 7.225 0 0 1 0 55.822V41.385a4.599 4.599 0 0 1 4.594-4.594h7.234a4.567 4.567 0 0 1 4.402 3.276l2.814 9.382a.658.658 0 0 0 .628.467h23.656a.658.658 0 0 0 .628-.467l2.814-9.385a4.572 4.572 0 0 1 4.402-3.273h7.234A4.599 4.599 0 0 1 63 41.385v14.437a7.225 7.225 0 0 1-7.219 7.219zM4.594 40.729a.656.656 0 0 0-.657.656v14.437a3.286 3.286 0 0 0 3.282 3.282H55.78a3.286 3.286 0 0 0 3.282-3.282V41.385a.656.656 0 0 0-.657-.656h-7.234a.65.65 0 0 0-.628.467L47.73 50.58a4.628 4.628 0 0 1-4.402 3.274H19.672a4.567 4.567 0 0 1-4.402-3.276l-2.814-9.382a.65.65 0 0 0-.628-.467H4.594z"
+                      />
+                    </g>
+                  </svg>
+
+                  <h3>Drag and drop file here</h3>
+                  <h3>or</h3>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="fileDropRefEj.click()"
+                  >
+                    Browse for file
+                  </button>
+                </div>
+                <div class="files-list">
+                  <div class="single-file">
+                    <div class="file-icon" style="width: 50px">
+                      <svg
+                        version="1.1"
+                        id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        x="0px"
+                        y="0px"
+                        viewBox="0 0 58 58"
+                        style="enable-background: new 0 0 58 58"
+                        xml:space="preserve"
+                      >
+                        <polygon
+                          style="fill: #edeada"
+                          points="51.5,14 37.5,0 6.5,0 6.5,58 51.5,58 "
+                        />
+                        <g>
+                          <path
+                            style="fill: #cec9ae"
+                            d="M16.5,23h25c0.552,0,1-0.447,1-1s-0.448-1-1-1h-25c-0.552,0-1,0.447-1,1S15.948,23,16.5,23z"
+                          />
+                          <path
+                            style="fill: #cec9ae"
+                            d="M16.5,15h10c0.552,0,1-0.447,1-1s-0.448-1-1-1h-10c-0.552,0-1,0.447-1,1S15.948,15,16.5,15z"
+                          />
+                          <path
+                            style="fill: #cec9ae"
+                            d="M41.5,29h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,29,41.5,29z"
+                          />
+                          <path
+                            style="fill: #cec9ae"
+                            d="M41.5,37h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,37,41.5,37z"
+                          />
+                          <path
+                            style="fill: #cec9ae"
+                            d="M41.5,45h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,45,41.5,45z"
+                          />
+                        </g>
+                        <polygon
+                          style="fill: #cec9ae"
+                          points="37.5,0 37.5,14 51.5,14 "
+                        />
+                      </svg>
+                    </div>
+                    <div class="info">
+                      <h4 class="name" *ngIf="!ejFile">No file selected!</h4>
+                      <h4 class="name" *ngIf="ejFile">
+                        {{ ejFile?.name }}
+                      </h4>
+                      <p class="size" *ngIf="!ejFile">0.0 MB</p>
+                      <p class="size" *ngIf="ejFile">
+                        {{ formatBytes(ejFile?.size, 1) }}
+                      </p>
+                      <mat-progress-bar
+                        value="ejFile.progress"
+                      ></mat-progress-bar>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  style="float: right; margin-right: 3em; margin-bottom: 1em"
+                  mat-raised-button
+                  color="primary"
+                  (click)="onUploadAtmElectronicJournal()"
+                >
+                  Upload Ej
+                  <!-- <span *ngIf="requesterDetails?.memo_id === null">Upload EJ</span><span
+                    *ngIf="requesterDetails?.memo_id !== null">Update Ej</span> -->
+                </button>
+              </form>
+            </div>
+          </mat-list>
+
+          <!-- <ng-template class="div" #update>
+            <h3>Mike</h3>
+          </ng-template> -->
+        </mat-tab>
+
+        <!-- 3 -->
+        <!-- *ngIf="getRoles() === 'ROLE_BANKING' || getRoles() === 'ROLE_DBA'" -->
+        <mat-tab
+        *ngIf="(hasEbankingUserRole() || hasDisputeDBAdminRole()) && requesterDetails?.requestType === 'NOT_FOUND_ON_SETTLEMENT' "
+        >
+        <ng-template mat-tab-label>
+          <mat-icon style="margin-right: 0.5em" class="example-tab-icon"
+            >message</mat-icon
+          >
+          <span
+            matBadge="{{ commentCount$ | async }}"
+            matBadgeOverlap="false"
+            matBadgeColor="warn"
+            >Feedback Panel
+          </span>
+        </ng-template>
+          <form
+            [formGroup]="commentForm"
+            style="margin-left: 2em; margin-top: 2em; margin-right: 2em"
+          >
+            <mat-expansion-panel
+              (opened)="panelOpenState = true"
+              (closed)="panelOpenState = false"
+              *ngIf="totalElements > 0"
+              style="margin-bottom: 2em"
+            >
+              <mat-expansion-panel-header
+                (click)="onReadMessage(requesterDetails?.id)"
+              >
+                <mat-panel-title>
+                  Feedback Panel
+                  <!-- <span>
+                    <mat-icon
+                      style="margin-top: 0.5em; margin-left: 0.8em"
+                      matBadge="{{ commentCount }}"
+                      matBadgeColor="warn"
+                      >message</mat-icon
+                    >
+                  </span> -->
+                </mat-panel-title>
+                <mat-panel-description>
+                  Click Here for Feedbacks
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div
+                class="search-results"
+                infiniteScroll
+                [infiniteScrollDistance]="2"
+                [infiniteScrollThrottle]="50"
+                [scrollWindow]="false"
+                (scrolled)="onScrollDown()"
+              >
+                <span *ngFor="let comment of comments">
+                  <div
+                    style="
+                      background-color: #e0e0e0;
+                      height: fit-content;
+                      margin-bottom: 1em;
+                      border-radius: 4px;
+                    "
+                  >
+                    <p
+                      style="
+                        padding-left: 1.5em;
+                        padding-top: 10px;
+                        margin-bottom: 0em;
+                        color: #0277bd;
+                      "
+                    >
+                      {{ comment?.senderId?.fullName | titlecase }}
+                    </p>
+                    <p
+                      style="
+                        padding-left: 1.5em;
+                        padding-top: 10px;
+                        margin-bottom: 0em;
+                      "
+                    >
+                      {{ comment.content }}
+                    </p>
+                    <div fxLayout="row">
+                      <p
+                        fxLayout="row"
+                        style="
+                          color: #546e7a;
+                          padding-left: 1.5em;
+                          padding-top: 10px;
+                          margin-bottom: 0em;
+                        "
+                        *ngIf="comment?.status === 'sent'"
+                      >
+                        sent<mat-icon inline style="margin-left: 0.5em"
+                          >done</mat-icon
+                        >
+                      </p>
+                      <p
+                        fxLayout="row"
+                        style="
+                          color: #2e7d32;
+                          padding-left: 1.5em;
+                          padding-top: 10px;
+                          margin-bottom: 0.5em;
+                        "
+                        *ngIf="comment?.status === 'seen'"
+                      >
+                        Seen<mat-icon inline style="margin-left: 0.5em"
+                          >done_all</mat-icon
+                        >
+                      </p>
+                      <p
+                        style="
+                          color: #ad1457;
+                          padding-left: 1.5em;
+                          padding-top: 10px;
+                          margin-bottom: 0.5em;
+                        "
+                      >
+                        {{ comment?.lastModifiedDate | date: "mediumDate" }}
+                      </p>
+                      <!-- <button style="color: #0277BD" *ngIf="comments" mat-button color="default"
+                        (click)="onReplyingToComment()">Edit</button> -->
+                    </div>
+                  </div>
+                </span>
+                <mat-spinner
+                  class="center"
+                  diameter="40"
+                  color="accent"
+                  *ngIf="isInfiniteScrollLoading"
+                ></mat-spinner>
+              </div>
+
+              <span>
+                <mat-form-field appearance="legacy" *ngIf="totalElements > 0">
+                  <mat-label>Write feedback</mat-label>
+                  <textarea
+                    matInput
+                    placeholder="Feedback"
+                    formControlName="content"
+                  ></textarea>
+                </mat-form-field>
+                <button
+                  *ngIf="totalElements > 0"
+                  mat-button
+                  color="primary"
+                  (click)="createComment(requesterDetails?.id)"
+                >
+                  Reply
+                </button>
+              </span>
+            </mat-expansion-panel>
+
+            <mat-form-field appearance="legacy" *ngIf="totalElements === 0">
+              <mat-label>Write feedback</mat-label>
+              <textarea
+                matInput
+                placeholder="Feedback"
+                formControlName="content"
+              ></textarea>
+            </mat-form-field>
+            <button
+              *ngIf="totalElements === 0"
+              mat-button
+              color="primary"
+              (click)="createComment(requesterDetails?.id)"
+            >
+              Send
+            </button>
+          </form>
+        </mat-tab>
+
+        <!-- *ngIf="getRoles() === 'ROLE_USER' || getRoles() === 'ROLE_APPROVER'" -->
+
+        <mat-tab label="Attached Document" *ngIf="requesterDetails?.status === 'REVERSED'">
+
+        <mat-grid-list cols="2">
+          <mat-grid-tile *ngIf="requesterDetails?.atmElectronicJournal">
+            <mat-card class="example-card" style="width:400px;box-shadow: none; margin-left: 5em;box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;">
+              <mat-card-subtitle>File Type -
+                {{
+                requesterDetails?.atmElectronicJournal.documentType | uppercase
+                }}</mat-card-subtitle>
+              <mat-card-title style="font-size: 16px">Updated At:
+            <span style="font-weight: normal;font-size:14px;">    {{
+              requesterDetails?.atmElectronicJournal.createdAt | date: "mediumDate"
+              }}</span>
+              </mat-card-title>
+              <mat-card-content>
+                <p style="font-size: 16px;font-weight: 700;">
+                  File Name:
+                  <a style="font-size: 14px;font-weight: normal;">{{
+                    requesterDetails?.atmElectronicJournal.fileName | lowercase
+                    }}</a>
+                </p>
+              </mat-card-content>
+              <mat-divider inset></mat-divider>
+              <mat-card-actions>
+                <button style="width: 100%; background-color: #424242;color: white;" mat-raised-button  (click)="openEjFileOnNewTab()">
+                  VIEW DETAILS
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </mat-grid-tile>
+          </mat-grid-list>
+
+          <div
+            *ngIf="
+              !(requesterDetails?.atmElectronicJournal)
+            "
+          >
+            <section
+              fxLayout="column wrap"
+              fxLayoutAlign="center center"
+              fxLayoutGap="30px"
+              style="padding-top: 3em"
+            >
+              <mat-icon
+                color="primary"
+                style="font-size: 5em; height: fit-content; width: fit-content"
+                >folder_open
+              </mat-icon>
+              <div fxFlex style="padding-bottom: 3em">
+                <p>No Documents!</p>
+                <p>Docs will show up here when attached.</p>
+              </div>
+            </section>
+          </div>
+  </mat-tab>
+
+        <mat-tab
+          label="Preview and Printables"
+        *ngIf="
+           ( hasDisputeApproverRole() ||
+            hasDisputeApproverRole() ||
+            hasEbankingUserRole()) &&
+           (requesterDetails?.acknowledged && hasDisputeApproverRole()) || ((requesterDetails?.status === 'SETTLED' || requesterDetails?.status === 'APPROVED') && (hasDisputeDBAdminRole() || hasDisputeInitiatorRole() || hasEbankingUserRole()))
+          ">
+        
+          <div
+            style="border: 1xp solid red; height: fit-content; margin: 4em"
+            fxLayoutAlign="center center"
+          >
+            <div fxLayout="column">
+              <mat-card class="example-card">
+                <mat-card-title>Request Preview</mat-card-title>
+                <mat-card-subtitle
+                  >Please Press the button to request
+                  details!</mat-card-subtitle
+                >
+                <mat-card-content>
+                  <!-- <p><span style="font-size: 16px;">R: </span>{{requesterDetails?.}}</p> -->
+                  <p>
+                    <span style="font-size: 16px">Failed Machine Name: </span
+                    >{{ requesterDetails?.miscellaneous?.failedMachineName }}
+                  </p>
+                </mat-card-content>
+                <mat-divider inset></mat-divider>
+                <mat-card-actions>
+                  <button
+                    mat-button
+                    (click)="openApproverDetails()"
+                    style="background-color: #004d40; color: white; width: 100%"
+                  >
+                    View More
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <!-- image -->
+    </div>
+  </div>
+</div>

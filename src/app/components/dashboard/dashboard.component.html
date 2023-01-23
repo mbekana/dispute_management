@@ -1,0 +1,64 @@
+<mat-toolbar color="primary" class="py-5 mb-4" style="width: 100%;display: flex;height: 5.5em;">
+
+  <span >
+    <h1>Dashboard</h1>
+  </span>
+
+</mat-toolbar>
+<mat-progress-bar style="margin-top: -2em;" *ngIf="!isLoaded && !errorMessage"  color="warn" mode="indeterminate" [hidden]="hasDisputeSystemAdminRole()"></mat-progress-bar>
+
+
+<div *ngIf="!isLoaded && !errorMessage " [hidden]="hasDisputeSystemAdminRole()">
+  <p style="color:#dc3545;margin-left: 0.5em;font-size: 14px;margin-top: 5em;">Loading...</p>
+</div>
+
+<app-error-page *ngIf="errorMessage" [errorMessage]="errorMessage"></app-error-page>
+
+
+<!--dash.component.html-->
+<div class="grid-container" *ngIf="isLoaded" [hidden]="hasDisputeSystemAdminRole()">
+  <!-- <h1 class="mat-h1">Dashboard</h1> -->
+  <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" rowHeight="200px">
+    <!--Mini Cards-->
+    <mat-grid-tile *ngFor="let i of ['New', 'Processing', 'Declined', 'Settled']" [colspan]="( cardLayout | async )?.miniCard?.cols"
+      [rowspan]="( cardLayout | async )?.miniCard?.rows">
+      <app-card title="{{i}}">
+        <div >
+        <span *ngIf="i==='New'" style="font-size: 28px;font-weight: 700;color: #0277BD;">{{newRequest}}</span>
+        <span *ngIf="i==='Processing'" style="font-size: 28px;font-weight: 700;color: #FFEB3B;">{{processing}}</span>
+        <span *ngIf="i==='Declined'" style="font-size: 28px;font-weight: 700;color: #E91E63;">{{declined}}</span>
+        <span *ngIf="i==='Settled'" style="font-size: 28px;font-weight: 700;color: #00E676;">{{settled}}</span>
+      </div>
+    </app-card>
+    </mat-grid-tile>
+    <!--Charts-->
+    <mat-grid-tile *ngFor="let i of ['Dispute Request Analysis', 'Latest New Requests']" [colspan]="(cardLayout | async)?.chart?.cols"
+      [rowspan]="( cardLayout | async )?.chart?.rows">
+      <app-card title="{{i}}">
+        <div>
+          <app-pie-chart *ngIf="i === 'Dispute Request Analysis'"></app-pie-chart>
+          <app-new-requests *ngIf="i === 'Latest New Requests'" style="height: 90%;"></app-new-requests>
+        </div>
+      </app-card>
+    </mat-grid-tile>
+    <!--Table-->
+    <!-- <mat-grid-tile [colspan]="(cardLayout | async)?.table?.cols" [rowspan]="(cardLayout | async)?.table?.rows">
+      <app-card title="Card 9"><div>Table Content Here</div></app-card>
+    </mat-grid-tile>--> 
+  </mat-grid-list> 
+ </div>
+
+ <div *ngIf="hasDisputeSystemAdminRole()">
+  <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" rowHeight="200px">
+    <mat-grid-tile *ngFor="let i of ['Greeting','Links' ]" [colspan]="(cardLayout | async)?.chart?.cols"
+    [rowspan]="( cardLayout | async )?.chart?.rows">
+    <app-card title="{{i}}">
+      <div>
+        <app-greeting *ngIf="i === 'Greeting'"></app-greeting>
+        <app-links *ngIf="i === 'Links'"></app-links>
+      </div>
+    </app-card>
+  </mat-grid-tile>
+  </mat-grid-list>
+  
+ </div>

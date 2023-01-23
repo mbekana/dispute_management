@@ -1,0 +1,55 @@
+<!-- tables -->
+<div class="mat-elevation-z2">
+  <table mat-table class="full-width-table" style="width: 100%;" matSort aria-label="Elements" [dataSource]="latestFiveRequests">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <td mat-cell *matCellDef="let row">{{row.id}}</td>
+    </ng-container>
+
+    <!-- Order Total Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let row"><span
+          [ngClass]="{initiation : row.status === 'INITIATION', processing : row.status === 'PROCESSING', closed:row.status === 'CLOSED'}">{{
+          row.status }}</span>
+      </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="cardHolderName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Card Holder Name</th>
+      <td mat-cell *matCellDef="let row">{{row.cardHolderName | titlecase }}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="cardNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Card Number</th>
+      <td mat-cell *matCellDef="let row">{{row.cardNumber}}</td>
+    </ng-container>
+
+    <!-- Payment Mode Column -->
+    <ng-container matColumnDef="transactionAmount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+      <td mat-cell *matCellDef="let row">{{row.transactionAmount}}</td>
+    </ng-container>
+    
+
+    <ng-container matColumnDef="details">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Details</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button class="example-icon" (click)="onNavigateToDetails(row.id)" aria-label="Example icon-button with menu icon">
+          <mat-icon color="primary">notes</mat-icon> <span class="example-spacer"></span>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 15, 20]">
+  </mat-paginator>
+</div>
+
+<!-- tables -->

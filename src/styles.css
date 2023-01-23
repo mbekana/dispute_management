@@ -1,0 +1,41 @@
+
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+
+html, body { 
+    height: 100%; 
+}
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* .navbar-color {background-color: #3f51b5; color: white;}
+.router-link-active {background-color: #3f51b5;}
+.no-border {border-radius: 0px;} */
+
+ /* .toolbar-color {background-color: #3f51b5; color: white;} */
+ .center {
+  margin-left: auto;
+  margin-right: auto;
+} 
+.v-center {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.txt-bold {font-weight: bold;}
+
+.selected {background-color: gainsboro;}
+
+
+button:focus, 
+button:active:focus, 
+button.active:focus {
+    outline: none !important;
+    outline-style: none !important;
+}
+
+
+
+

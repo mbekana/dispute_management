@@ -1,0 +1,398 @@
+
+<mat-toolbar color="primary" class="py-5 mb-4" style="width: 100%;display: flex;height: 5.5em;">
+
+  <span class="center"><h2>Dispute Request Initiation Panel</h2></span>
+  <span class="example-spacer"></span>
+    <button mat-raised-button color="primary" class="example-icon" aria-label="Example icon-button with menu icon" style="margin-right: 12em;"> 
+      <mat-icon style="margin-right: 0.3em;">history</mat-icon> <span class="example-spacer" (click)="goToHistory()">Request History</span> 
+    </button>
+</mat-toolbar>
+
+<mat-progress-bar style="margin-top: -2em;" *ngIf="isLoading && !errorMessage" color="warn" mode="indeterminate"></mat-progress-bar>
+
+
+<div *ngIf="isLoading && !errorMessage">
+  <p style="color:#dc3545;margin-left: 0.5em;font-size: 14px;margin-top: 5em;">Loading...</p>
+</div>
+
+
+
+<div style="width: 70%;margin-left:15em;">
+
+  <div class="row">
+    <div class="col-lg-1"></div>
+
+    <div class="col-lg-10">
+      <div class="row">
+        <div class="col-md-4 order-md-2 mb-4">
+          <div *ngFor="let req of allRequest">
+            <div *ngIf="new_date == req.createAt">
+              <h2 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Important Details</span>
+              </h2>
+              <ul class="list-group mb-3">
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Card Number</h6>
+                    <small class="text-muted"><code>{{ req.cardNumber }}</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">credit_card</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Your Account Number</h6>
+                    <small class="text-muted"><code>{{ req.accountNumber }}</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">account_balance</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Amount Requested</h6>
+                    <small class="text-muted"><code>
+                        ETB{{ req.transcationAmount | number: "1.2-2" }}</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">paid</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    bg-light
+                  ">
+                  <div class="text-primary">
+                    <h6 class="my-0">Contact Number</h6>
+                    <small><code>{{ req.telephone }}</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">phone</mat-icon>
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <strong>Status</strong>
+                  <span class="text-primary">
+                    <p>Pending...</p>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div *ngIf="!new_date">
+              <h2 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Important Details</span>
+              </h2>
+              <ul class="list-group mb-3">
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Card Number</h6>
+                    <small class="text-muted"><code>Pending...</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">credit_card</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Your Account Number</h6>
+                    <small class="text-muted"><code>Pending...</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">account_balance</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    lh-condensed
+                  ">
+                  <div>
+                    <h6 class="my-0">Amount of refund</h6>
+                    <small class="text-muted"><code>Pending...</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">paid</mat-icon>
+                  </span>
+                </li>
+                <li class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    bg-light
+                  ">
+                  <div class="text-primary">
+                    <h6 class="my-0">Contact Number</h6>
+                    <small><code>Pending...</code></small>
+                  </div>
+                  <span class="text-primary">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">phone</mat-icon>
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <strong>Status</strong>
+                  <span class="text-primary">
+                    <p>Pending...</p>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 order-md-1">
+          <div *ngIf="!new_date">
+            <h2 class="mb-3 " style="color: #3f51b5;">Dispute Request Form</h2>
+            <hr />
+            <div>
+              <form class="needs-validation" [formGroup]="requestForm" novalidate>
+                <div class="row">
+                  <div>
+                    <div class="input-group">
+                      <div class="col-lg-8">
+                        <mat-form-field appearance="legacy" style="width: 95%;">
+                          <mat-label>Enter Account Number</mat-label>
+                          <input matInput placeholder="Account Number!" formControlName="accountNumber"
+                            (ngModelChange)="accountNumberChanged($event)">
+                          <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+                          <!-- <mat-hint>Hint</mat-hint> -->
+                        </mat-form-field>
+                        <!-- </div> -->
+                        <div class="mb-2">
+                          <div *ngIf="
+                          requestFormFields.accountNumber.invalid &&
+                          (requestFormFields.accountNumber.dirty ||
+                            requestFormFields.accountNumber.touched)
+                        ">
+                            <div *ngIf="requestFormFields.accountNumber.errors?.minlength" style="
+                          color: #f44336;
+                          margin-left: 0.1em;
+                          margin-top: 0.5em;
+                        ">
+                              Account Number should be a minumum length of 16 bit!
+                            </div>
+                            <div *ngIf="requestFormFields.accountNumber.errors?.maxLength" style="
+                          color: #f44336;
+                          margin-left: 0.1em;
+                          margin-top: 0.5em;
+                        ">
+                              Account Number should be a maximum length of 16 bit!
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <button mat-raised-button color="primary" style="width: 78%;"
+                          (click)="findByAccountNumber()" [disabled]="requestForm.get('accountNumber')?.invalid">
+                          Search
+                        </button>
+                      </div>
+
+
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <mat-form-field appearance="fill" style="width: 92%;">
+                    <mat-label>Card Holder Name</mat-label>
+                    <input matInput placeholder="Card Holder Name" formControlName="cardHolderName">
+                    <mat-error *ngIf="requestFormFields.cardHolderName.errors?.numeric">
+                      Requester Name cannot be empty
+                    </mat-error>
+                  </mat-form-field>
+
+      
+
+                  <div class="col-md-6">
+                    <mat-form-field appearance="fill" style="width: 82%;">
+                      <mat-label>Card Number</mat-label>
+                      <input matInput placeholder="card Number" formControlName="cardNumber">
+                      <mat-error *ngIf="requestFormFields.cardNumber.errors?.required">
+                        Please provide Card Number!
+                      </mat-error>
+                      <mat-error *ngIf="requestFormFields.cardNumber.errors?.minlength">
+                        Card Number should be a minumum length of 16 bit!
+                      </mat-error>
+                      <mat-error *ngIf="requestFormFields.cardNumber.errors?.numeric">
+                        Card Number should be a numeric value!
+                      </mat-error>
+                    </mat-form-field>
+                 
+                  </div>
+
+                  <div class="col-md-6">
+                    <mat-form-field appearance="fill" style="width: 82%;">
+                      <mat-label>Account Number</mat-label>
+                      <input matInput placeholder="Account Number" formControlName="accountNumber">
+                      <mat-error *ngIf="requestFormFields.accountNumber.invalid &&
+                      (requestFormFields.accountNumber.dirty ||
+                        requestFormFields.accountNumber.touched)">
+                        Please provide Card Number!
+                      </mat-error>
+                      <mat-error *ngIf="requestFormFields.accountNumber.errors?.minlength">
+                        Account Number should be a minumum length of 16 bit!
+                      </mat-error>
+                      <mat-error *ngIf="requestFormFields.accountNumber.errors?.numeric">
+                        Account Number should be a numeric value!
+                      </mat-error>
+                    </mat-form-field>
+                
+                  </div>
+                </div>
+
+                <div>
+
+                  <mat-form-field appearance="fill" style="width: 92%;">
+                    <!-- <mat-label>Enter Transaction Amount</mat-label> -->
+                    <span matPrefix>ETB&nbsp;</span>
+                    <input matInput placeholder="Transaction Amount" formControlName="transactionAmount">
+                    <span matSuffix>.00</span>
+                    <mat-error *ngIf="requestFormFields.transactionAmount.invalid &&
+                    (requestFormFields.transactionAmount.dirty ||
+                      requestFormFields.transactionAmount.touched)">
+                      Please provide the amout of money!
+                    </mat-error>
+                    <mat-error *ngIf="requestFormFields.transactionAmount.errors?.numeric">
+                      Amount should be a numeric value!
+                    </mat-error>
+                  </mat-form-field>
+      
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field appearance="fill" style="width: 92%;">
+                      <mat-label>Enter Address</mat-label>
+                      <input matInput placeholder="Address" formControlName="address">
+                      <mat-error *ngIf="requestFormFields.address.errors?.numeric">
+                        Address can not be null!
+                      </mat-error>
+                    </mat-form-field>
+
+                  </div>
+
+                  <div class="col-md-6">
+                    <mat-form-field appearance="fill" style="width: 82%;">
+                      <mat-label>Enter Telephone</mat-label>
+                      <span matPrefix>+251 &nbsp;</span>
+                      <input matInput placeholder="Telephone" formControlName="telephone">
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <mat-form-field style="width: 92%" appearance="fill">
+                    <mat-label class="text-primary">Transacion Date</mat-label>
+                    <input matInput [matDatepicker]="picker1" [max]="today" formControlName="transactionDate" />
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                    <mat-error *ngIf="requestFormFields.transactionDate.errors?.numeric">
+                      Transaction Name should filled out!
+                    </mat-error>
+                  </mat-form-field>
+
+                </div>
+<!-- 
+                <div>
+                  <div class="row" style="vertical-align: middle; position: relative">
+                    <mat-form-field appearance="legacy" style="width: 92%;" appearance="fill">
+                      <mat-label>Enter Transaction Time</mat-label>
+                      <input matInput type="time" placeholder="Transaction Time" formControlName="transactionTime">
+                    </mat-form-field>
+                  </div>
+                </div> -->
+
+                <div class="row">
+                  <div class="col-md-6">
+                     <mat-form-field appearance="fill">
+                    <mat-label>Bank Name</mat-label>
+                    <mat-select [compareWith]="compareFn"  formControlName="bankTerminal" (infiniteScroll)="onScrollDown()" [complete]="pageNumber === banks?.length" msInfiniteScroll>
+                      <mat-option>--</mat-option>
+                      <mat-option *ngFor="let bank of banks$ | async" [value]="bank" >
+                        {{ bank.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="requestFormFields.bankTerminal.errors?.numeric">
+                      Bank Name should be provided!
+                    </mat-error>
+                  </mat-form-field>
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="requestForm.get('bankTerminal')?.value.name ==='ENAT BANK S.C'">
+                    <mat-form-field appearance="fill" >
+                      <mat-label>Branch Name </mat-label>
+                      <mat-select  formControlName="terminalOwnerBranch" >
+                        <mat-option>--</mat-option>
+                        <mat-option *ngFor="let branch of branches" [value]="branch.code">
+                          {{ branch.name }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="requestFormFields.terminalOwnerBranch.errors?.required">
+                        Branch Name should be provided!
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <!-- <mat-form-field appearance="fill" > -->
+                    <mat-checkbox class="example-margin" formControlName="customerStatement" color="primary">Customer Statement</mat-checkbox>
+                  <!-- </mat-form-field> -->
+                </div>
+                <hr class="mb-4" />
+                <div class="form-group mb-4">
+                  <button style="width: 100%;" mat-raised-button color="primary" [disabled]="requestForm.invalid || requestForm.pristine"
+                    (click)="onSubmit()">
+                    Save Request
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div *ngFor="let req of allRequest">
+            <div *ngIf="new_date == req.createAt">
+              <h2 class="mb-3 text-primary">Request Information Details</h2>
+              <hr />
+              <div>Card Holder Name: {{ req.cardHolderName }}</div>
+
+              <div>Branch Name: {{ req.terminalOwnerBranch?.branchName }}</div>
+              <div>Bank or Atm Name: {{ req.terminalBank?.bankName }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-1"></div>
+    </div>
+  </div>
+</div>

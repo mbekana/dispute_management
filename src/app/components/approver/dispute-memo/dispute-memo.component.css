@@ -1,0 +1,36 @@
+.container {
+    padding: 10px;
+    margin-bottom: 100px;
+  }
+  
+  .form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 80%;
+    margin-left: 10%;
+  }
+  
+  .form-element {
+    padding: 5px 0px 15px 2px;
+    width: 100%;
+  }
+  
+  .button {
+    width: 100%;
+  }
+
+  .center{
+    width: 400px;
+    align-items: center;
+  }
+
+  .header-text{
+    font-size: 16px;
+    margin-bottom: 1em;
+    font-weight: 500;
+
+  }
+
+  .label-container{
+    align-items: center;
+  }

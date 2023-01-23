@@ -1,0 +1,36 @@
+<div class="main-div" *ngIf="filteredRequest">
+  <mat-card class="main" *ngFor="let request of filteredRequest" style="width: 600px;box-shadow:none;">
+    <h2 mat-dialog-title>Requests Expiring after Two days</h2>
+    <mat-card-content class="mat-y">
+      <p>These requests below as you have been notified or gonna be soon will expire in two days.</p>
+      <mat-divider style="margin-bottom: 2em;" color="primary"></mat-divider>
+      <div class="row" *ngIf="filteredRequest">
+        <div class="column left" style="margin-left:auto;">
+          <h2 (click)="onNavigateToEdit(request.id)" style="color:black;font-weight: 500;"> Card Number: <span
+              style="font-family: monospace;color:brown;">{{request.cardNumber}}</span></h2>
+        </div>
+        <div fxLayout="row">
+          <div fxLayout="column" class="column middle text-in-tile" fxFlex="60">
+            <p class="content" style="color:black;font-weight: 500;">Account Number:
+              <span style="font-family:monospace;">{{request.accountNumber}}</span></p>
+            <p style="color:black;font-weight: 500;">Card Holder Name: <span style="font-weight: normal;"> {{request.cardHolderName | titlecase}}</span></p>
+            <p style="color:black;font-weight: 500;">Transaction Amount: <span style="color:brown">{{request.transactionAmount | currency : 'ETB '}}</span></p>
+          </div>
+          <mat-divider [vertical]="true" style="margin-right: 2em;"></mat-divider>
+          <div fxLayout="column" fxFlex="40">
+            <p class="content" style="color:black;font-weight: 500;">Fe Number:
+              <span style="font-family:monospace;">{{request.feNumber}}</span></p>
+            <p style="color:black;font-weight: 500;">Dispute Id: <span style="font-weight: normal;"> {{request.disputeId}}</span></p>
+          </div>
+        </div>
+        <mat-divider style="margin-top: 2em;"></mat-divider>
+      </div>
+      <mat-spinner *ngIf="errorMessage" class="example-margin" color="accent" diameter="40" value="50">
+      </mat-spinner>
+      <p *ngIf="filteredRequest.length === 0">No requests found.</p>
+    </mat-card-content>
+  </mat-card>
+  <mat-paginator [length]="total"    [pageIndex]="pageNumber"
+  [pageSize]="pageSize" [pageSizeOptions]="[]" showFirstLastButtons (page)="fetchTipData($event)">
+  </mat-paginator>
+</div>

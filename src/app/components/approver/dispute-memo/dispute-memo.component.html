@@ -1,0 +1,170 @@
+<div fxLayout="row" class="label-container">
+  <label class="header-text">Please fill the details below</label>
+</div>
+
+<div fxLayoutAlign="center center">
+  <mat-stepper orientation="vertical">
+    <form
+    class="example-form"
+    [formGroup]="disputeMemoForm"
+   
+  >
+    <mat-step>
+      <ng-template matStepLabel>Failed Machine Name</ng-template>
+      <ng-template matStepContent>
+        <mat-form-field
+        class="example-full-width"
+        appearance="legacy"
+        style="width: 100%; margin-top: 1em;"
+      >
+        <mat-label>Failed Machine Name</mat-label>
+        <input
+          matInput
+          formControlName="failedMachineName"
+          placeholder="Failed Machine Name"
+        />
+        <mat-error *ngIf="controlName.failedMachineName.errors?.required"
+          >Machine Name Cannot be Empty</mat-error
+        >
+      </mat-form-field>
+        <button mat-button matStepperNext>Next</button>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Debit</ng-template>
+      <ng-template matStepContent>
+        <table class="example-full-width" cellspacing="0" style="margin-top: 1em;">
+          <tr>
+            <td>
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Cash On ATM</mat-label>
+                <input
+                  matInput
+                  formControlName="cashOnATM"
+                  placeholder="Cash on ATM"
+                />
+                <mat-error *ngIf="controlName.cashOnATM.errors?.required"
+                  >Please provide Cash On AtTM</mat-error
+                >
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>NetWork Suspense GL</mat-label>
+                <input
+                  matInput
+                  formControlName="networkSuspenseGl"
+                  placeholder="Network suspense GL"
+                />
+                <mat-error *ngIf="controlName.networkSuspenseGl.errors?.required"
+                  >Network suspense GL Cannot be Empty</mat-error
+                >
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Credit</ng-template>
+      <ng-template matStepContent>
+           
+        <table class="example-full-width" cellspacing="0" style="margin-top: 1em;">
+          <tr>
+            <td>
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Customer’s A/C</mat-label>
+                <input
+                  matInput
+                  formControlName="creditCustomersAC"
+                  placeholder="Cr.  Customer’s A/C"
+                />
+                <mat-error *ngIf="controlName.creditCustomersAC.errors?.required"
+                  >Credit Customer’s A/C Cannot be Empty</mat-error
+                >
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field
+              class="example-full-width"
+              appearance="fill"
+              style="width: 100%"
+            >
+              <mat-label>Cash withdrawal Fee</mat-label>
+              <input
+                matInput
+                formControlName="atmCashWithdrawalFee"
+                placeholder="ATM Cash withdrawal fee"
+              />
+              <mat-error *ngIf="controlName.atmCashWithdrawalFee.errors?.required"
+                >ATM Cash withdrawal fee Cannot be Empty</mat-error
+              >
+            </mat-form-field>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>NetWork Suspense GL</mat-label>
+                <input
+                  matInput
+                  formControlName="networkSuspenseGl2"
+                  placeholder="Network suspense GL2"
+                />
+                <mat-error *ngIf="controlName.networkSuspenseGl2.errors?.required"
+                  >Network suspense GL Cannot be Empty</mat-error
+                >
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Add Payer Branch</ng-template>
+      <ng-template matStepContent>
+        <mat-form-field appearance="fill"  style="margin-top:1em;width:100%;">
+          <mat-label>Branch Name </mat-label>
+          <mat-select [compareWith]="compareBranch" formControlName="payerBranch" >
+            <mat-option *ngFor="let branch of branches" [value]="branch">
+              {{ branch?.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="controlName.payerBranch.errors?.numeric">
+            Branch Name should be provided!
+          </mat-error>
+        </mat-form-field>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Submit and Finish</ng-template> 
+      <div fxLayout="row" style="margin-top: 1em;">
+        <div fxLayout="column" fxFlex="50%">
+          <button style="width: 100px;" mat-raised-button color="warn" matStepperPrevious aria-label="Example icon button with a filter list icon">
+            <mat-icon>filter_list</mat-icon>Previous
+          </button>
+        </div>
+        <div fxLayout="column" fxFlex="50%">
+          <button
+          (click)="onSubmitMemo()"
+          style="margin-left: auto;width: 100px;"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!disputeMemoForm.valid"
+        >
+          Submit Form
+        </button>
+        </div>
+      </div>
+    </mat-step>
+    </form>
+  </mat-stepper>
+  
+</div>

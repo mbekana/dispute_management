@@ -1,0 +1,113 @@
+::ng-deep .notification-menu {
+  width: 400px;
+  height: 300px;
+  margin-top: 0.2em;
+  color: black;
+  position: fixed;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}
+
+.newNotification {
+  background-color: #f5f5f5;
+  padding-left: 0em;
+  padding-top: 0.5em !important;
+  margin-top: -0.5em;
+}
+
+.example-sidenav {
+  width: fit-content;
+}
+
+.search-results {
+  height: 20rem;
+  overflow: scroll;
+}
+
+/* .aligned-with-icon{
+  position: absolute;
+  margin-top: 5px;
+  margin-left: 5px; 
+} */
+
+.with-icon {
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .mat-expansion-panel .mat-list-item {
+  padding-left: 15px !important;
+}
+
+::ng-deep .mat-nav-list .is-active {
+  background-color: rgb(204, 204, 204) !important;
+  border-left: 8px solid rgb(139, 137, 133);
+  width: calc(100% - 8px) !important;
+}
+
+::ng-deep .mat-nav-list {
+  background-color: white;
+}
+
+#menu-button.rotated {
+  transform: rotate(180deg);
+}
+.submenu {
+  overflow-y: hidden;
+  transition: 300ms ease-in-out;
+  height:0;
+  /* width: 200px; */
+}
+
+.submenu.expandedbranch {
+  height: 96px;
+  transition:  300ms ease-in-out;
+  overflow:hidden;
+  width: fit-content;
+}
+
+.submenu.approver {
+  height: 144.915px;
+  transition:  300ms ease-in-out;
+  overflow:hidden;
+  width: fit-content;
+}
+
+
+
+.submenu.expanded {
+  height: 144.99px;
+  transition:  300ms ease-in-out;
+  overflow:hidden;
+  /* transition: 300ms ease-in-out; */
+  width: fit-content;
+}
+
+
+
+
+.selected{
+  color: #3f51b5;
+}
+
+
+ .hidden{
+  display: none !important;
+  max-height: 0 !important;
+  height: 0 !important;
+  visibility: hidden;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.showlistitem{
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 1em;
+  width: auto;
+}

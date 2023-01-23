@@ -1,0 +1,87 @@
+<mat-toolbar color="primary" class="py-5 mb-4" style="width: 100%;display: flex;height: 5.5em;">
+    <span>
+        <h2>Direct Request Details</h2>
+    </span>
+    <span class="example-spacer"></span>
+</mat-toolbar>
+
+<mat-progress-bar style="margin-top: -2em;" *ngIf="!isLoaded" color="warn" mode="indeterminate"></mat-progress-bar>
+<div *ngIf="!isLoaded">
+    <p style="color:#dc3545;margin-left: 0.5em;font-size: 14px;margin-top: 5em;">Loading...</p>
+  </div>
+
+<div fxLayout="row" style="margin-top: 2em;" *ngIf="isLoaded">
+    <div fxLayout="column" style="width: 50%;margin-right:2em;margin-left:7em">
+      
+        <h1>Main Details</h1>
+        <mat-divider style="margin-bottom: 1em;"></mat-divider>
+        <div fxLayout="row"  fxLayoutGap="20px">
+            <div style="font-size: 16px;" [ngClass]="{type:directRequest?.requestType === 'OTHER_BANK_ON_ENAT'}"><p>Request Type: Other On Enat</p></div>
+            <div>
+                <p style="font-size: 16px;">Description: {{directRequest?.transactionDescription}}</p>
+            </div>
+            <div>Status: <span [ngClass]="{closed:directRequest?.status === 'CLOSED'}"> {{directRequest?.status}}</span></div> 
+            </div>
+        <!-- <p>{{directRequest | json}}</p> -->
+        <mat-card style="margin-top: 3em;">
+            <mat-card-title style="font-size: 14px;">Request Details</mat-card-title>
+            <mat-card-subtitle>Expand the panel in the right for transaction related details</mat-card-subtitle>
+            <!-- <mat-card-content>
+                <p>{{directRequest?.terminalId}}</p>
+                <p>{{directRequest?.terminalId}}</p>
+              </mat-card-content> -->
+         
+          
+        <div fxLayout="row" fxLayoutGap="20px" style="margin-top: 2em;">
+            <div fxLayout="column" style="width: 100%;margin-left: 1em;float: right !important;">
+                <!-- <div fxLayoutAlign="center center"> -->
+                    <h3>Issuer Bank</h3>
+                    <p style="color: #6c757d;">{{directRequest?.issuerBank?.bankName}}</p>
+                    <h3>Acquirer Bank</h3>
+                    <p style="color: #6c757d;">{{directRequest?.acquirerBank?.bankName}}</p>
+                    <h3>Status</h3>
+                    <p style="color: #6c757d;">{{directRequest?.status}}</p>
+                <!-- </div> -->
+          
+            </div>
+            <div fxLayout="column" style="width: 100%;float: left !important;">
+                <h3>Description</h3>
+                <p style="color: #6c757d;">{{directRequest?.transactionDescription}}</p>
+                <h3>Terminal ID</h3>
+                <p style="color: #6c757d;">{{directRequest?.terminalId}}</p>
+                <h3>Fe Number</h3>
+                <p style="color: #6c757d;">{{directRequest?.feUtrnno}}</p>
+            </div>
+        </div> 
+    </mat-card>
+    </div>
+
+    <div fxLayout="column">
+        <div fxLayout="row">
+            <div fxLayout="column" style="width: 100%;margin-top: 2em;">
+                <mat-accordion>
+  
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
+                    style="margin-top: 1em;">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Transaction Details
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            Press Here For Details
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <p style="font-size: 16px; font-weight:500;">Transaction Date: <span style="color: #6c757d;">{{directRequest?.transactionDate | date : 'mediumDate'}}</span></p>
+                    <p style="font-size: 16px; font-weight:500;">Transaction Place: <span style="color: #6c757d;">{{directRequest?.transactionPlace}}</span></p>
+                    <p style="font-size: 16px; font-weight:500;">Card Number: <span style="color: #6c757d;">{{directRequest?.cardNumber}}</span></p>
+                    <p style="font-size: 16px; font-weight:500;">Currency: <span style="color: #6c757d;">{{directRequest?.currency}}</span></p>
+                    <p style="font-size: 16px; font-weight:500;">Amount: <span style="color: #6c757d;">{{directRequest?.amount}}</span></p>
+                </mat-expansion-panel>
+                </mat-accordion>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>

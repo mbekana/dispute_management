@@ -1,0 +1,469 @@
+<div fxLayout="row" class="noprint">
+  <button class="doNotPrint" (click)="onPrint()" style="float:right;" mat-raised-button>
+  <mat-icon style="margin-right: 0.2em">print</mat-icon>Print
+</button>
+</div>
+
+<div class="printable" id="memoPrint" fxLayout="row" fxLayoutAlign="start center" *ngIf="requests[0].requestType === 'ENAT_ENAT'" >
+  <div fxLayout="column">
+    <div fxLayout="row" fxLayoutAlign="space-between"
+      style="height: 2em;width:800px;margin-top: 2em;margin-bottom: 1em;">
+      <div fxLayout="column" style="width: 10%;margin-bottom: 1em;height:80px;margin-top: 1em;">
+        <img mat-card-image  src="../assets/logo_for_memo.jpg" alt="Photo of a Shiba Inu">
+      </div>
+      <div fxLayout="column" style="width: 90%;">
+        <h1
+          style="font-weight: 700;color: #1a237e;font-size: 36px;font-family: 'Times New Roman', Times, serif;margin-top:0.3em;margin-left:0.5em;width: 450px;">
+          INTER DEPARTMENTAL MEMO</h1>
+      </div>
+    </div>
+      <mat-divider style="margin-top: 4em;max-width: 780px;"></mat-divider>
+ 
+    <div fxLayout="row" style="margin-top: 2em;font-size:16px;font-weight: 700;">
+      <div>
+        <p>To : Manager of, {{requests[0]?.payerBranchName }}</p>
+        <p>From : E-banking Section-ISD</p>
+        <p>Date : <span *ngIf="requests[0]?.creditDate">{{requests[0]?.creditDate | date :"mediumDate"}}</span><span *ngIf="!requests[0]?.creditDate">Date will appear here when approved!</span></p>
+        <p>Subject : Payment to Transaction Dispute</p>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+
+    <div fxLayout="row" style="margin-top: 2em;">
+      <p id="printText">On the date and details specified below the ATM ({{disputeMemo?.failedMachineName}}) machine failed to dispense but deduct the amount
+        from branch customer account.</p>
+    </div>
+
+    <div fxLayout="row">
+      <table mat-table style="width: 95%;" id="printTable" [dataSource]="requests" class="mat-elevation-z2">
+        <!-- Position Column -->
+        <ng-container matColumnDef="transactionDate">
+          <th mat-header-cell *matHeaderCellDef>Transaction Date</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.transactionDate | date:'mediumDate' }}
+          </td>
+        </ng-container>
+
+
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="requesterName">
+          <th mat-header-cell *matHeaderCellDef style="font-size: 0.75rem;">Customer Name</th>
+          <td mat-cell *matCellDef="let element">
+            <span style="font-size: 0.75rem;">{{ element.requesterName | titlecase}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cardNumber">
+          <th mat-header-cell *matHeaderCellDef style="font-size: 0.75rem;">Card Number</th>
+          <td mat-cell *matCellDef="let element" style="font-size: 0.75rem;">{{ element.cardNumber }}</td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="accountNumber">
+          <th mat-header-cell *matHeaderCellDef style="font-size: 0.75rem;">Account Number</th>
+          <td mat-cell *matCellDef="let element" style="font-size: 0.75rem;">{{ element.accountNumber }}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="transcationAmount">
+          <th mat-header-cell *matHeaderCellDef>Cr. Customers Account</th>
+          <td mat-cell *matCellDef="let element">
+            <code>{{
+              requests[0]?.disputeMemo?.creditCustomersAC | currency: "ETH ":"code"
+            }}</code>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <div fxLayout="row" style="margin-top: 2em;">
+      <p id="printText" >After investigating the EJ, we identified that the customer did not take the cash. This is therefore, to
+        instruct you to credit the stated amount to the indicated customer’s account using the entry stated below. </p>
+    </div>
+    <div style="margin-top: 2em;">
+      <div fxLayout="row">
+        <p fxLayout="column">Dr. Cash on ATM ........................................................................... </p><span style="color: brown; font-weight:500;margin-left: 1em;">{{requests[0]?.disputeMemo?.cashOnATM | currency : 'ETB '}}</span>
+      </div>
+
+      <div fxLayout="row">
+        <p fxLayout="column">Network suspense GL ................................................................... </p><span style="color: brown; font-weight:500;margin-left: 1em;">{{requests[0]?.disputeMemo?.networkSuspenseGl | currency : 'ETB '}}</span>
+      </div>
+
+      <div fxLayout="row">
+        <p>Cr. Customer’s A/C ......................................................................... </p><span style="color: brown; font-weight:500;margin-left: 1em;">{{requests[0]?.disputeMemo?.creditCustomersAC | currency : 'ETB '}}</span>
+      </div>
+
+      <div fxLayout="row">
+        <p> ATM Cash withdrawal fee ................................................................... </p><span style="color: brown; font-weight:500;margin-left: 1em;">{{requests[0]?.disputeMemo?.atmCashWithdrawalFee | currency : 'ETB '}}</span>
+      </div>
+
+    </div>
+
+    <div fxLayout="row" style="margin-top: 2em;margin-bottom: 2em;width:500px;" class="noprint" *ngIf="requests[0]?.requestType === 'NOT_FOUND_ON_SETTLEMENT'">
+    <div style="width:500px;">
+      <h2>Feedback Histories</h2>
+      <hr>
+      <div class="search-results"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      [scrollWindow]="false"
+      (scrolled)="onScrollDown()">
+        <span *ngFor="let comment of comments">
+          <div style="background-color: #E0E0E0;height: fit-content;margin-bottom:1em;border-radius: 4px;">
+            <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;color: #0277BD;">
+              {{comment?.senderId | titlecase}}</p>
+            <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;">{{comment.content}}</p>
+            <div fxLayout="row">
+              <p fxLayout="row" style="color:#546E7A;padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;" *ngIf="comment?.status === 'delivered'">
+                delivered<mat-icon inline style="margin-left: 0.5em;">done</mat-icon>
+              </p>
+              <p fxLayout="row" style="color:#2e7d32;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;" *ngIf="comment?.status === 'seen'">
+                Seen<mat-icon inline style="margin-left: 0.5em;">done_all</mat-icon>
+              </p>
+              <p style="color:#ad1457;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;">{{comment?.lastModifiedDate | date : 'mediumDate'}}</p>
+              <!-- <button style="color: #0277BD" *ngIf="comments" mat-button color="default"
+                (click)="onReplyingToComment()">Edit</button> -->
+            
+            </div>
+     
+          </div>
+        </span>
+        <!-- <mat-spinner class="center" diameter="40" color="accent" *ngIf="isInfiniteScrollLoading"></mat-spinner> -->
+
+      </div>
+      <div fxLayout="row" style="flex: 1 1 auto">
+        <mat-divier></mat-divier>
+      </div>
+    </div>
+
+    
+    </div>
+
+
+  </div>
+</div>
+
+
+<!-- Other bank print header-->
+<div *ngIf="requests[0]?.requestType === 'ENAT_ON_OTHER_BANK'" class="printable">
+  <div class="details" fxLayout="row" fxLayoutAlign="center center" >
+    <div fxLayout="row">
+        <div fxLayout="column" fxLayoutAlign="center center" style="line-height: -0.4;">
+            <h2 >ENAT BANK S.C</h2>
+            <h3 style="margin-top: -0.5em;">E-BANKING</h3>
+            <h4 style="margin-top: -0.5em;">Transaction Dispute Form</h4>
+        </div>
+    </div>
+</div>
+<!-- other bank print header end -->
+
+<!-- fe number, dispute id, case opened date -->
+<div fxLayout="row" fxLayoutAlign="start center" style="margin-top: 2em;margin-bottom: 2em;">
+  <div fxLayout="column" fxFlex="50" >
+    <div fxLayout="row" *ngIf="requests[0]?.requestType === 'ENAT_ON_OTHER_BANK'">
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Fe Number: </span> {{requests[0].feNumber }}</p>
+    </div>
+    <div fxLayout="row" *ngIf="requests[0]?.requestType === 'ENAT_ON_OTHER_BANK'">
+
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Dispute Id: </span> {{requests[0].disputeId }}</p>
+    </div>
+  </div>
+  <div fxLayout="column" fxFlex="50" >
+    <div fxLayout="row" style="text-align: right;justify-content:flex-end;">
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Case Opened On: </span> {{requests[0].createdAt | date:'mediumDate'}}</p>
+    </div>
+  </div>
+</div>
+<!-- ending -->
+
+<!-- start table -->
+<div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 1em;">
+  <div fxLayout="column" fxFlex="50">
+    <table class="mat-table">
+      <thead>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Name:</th>
+          <td class="mat-cell" style="width: 400px;">
+            {{requests[0].cardHolderName | titlecase}}
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell" style="width: 200px;">Card No:</th>
+          <td class="mat-cell" style="width: 350px;">
+            {{requests[0].cardNumber }}
+          </td>
+        </tr>
+      </tbody>  
+        </table>
+        <table class="mat-table">
+  
+      <thead>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Account Number:</th>
+          <td class="mat-cell" >
+            {{requests[0].accountNumber }}
+          </td>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="height: 30px;">
+          <th class="mat-header-cell">Address:</th>
+          <td class="mat-cell" >
+            {{requests[0].address }}
+          </td>
+        </tr>
+      </tbody>
+        </table>
+  </div>
+  
+  <div fxLayout="column" fxFlex="50">
+    <table class="mat-table">
+    <thead>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Transacion Date :</th>
+        <td class="mat-cell" >
+          {{requests[0].transactionDate | date: 'mediumDate' }}
+        </td>
+        
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Bank | ATM:</th>
+        <td class="mat-cell" >
+          {{requests[0].bankTerminal?.name | titlecase}}
+        </td>
+      </tr>
+    </tbody>
+    
+  </table>
+  <table  class="mat-table">
+    <tbody>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Transaction Time:</th>
+        <td class="mat-cell" >
+          Not provided
+        </td>
+      </tr>
+    </tbody>
+    <thead>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Transaction Amount:</th>
+        <td class="mat-cell" >
+          <span style="border: brown !important;">
+            {{requests[0].transactionAmount | currency : 'ETB '}}</span>
+        </td>
+      </tr>
+    </thead>
+  </table>
+  </div>
+  </div>
+<!-- end table -->
+
+<div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 2em;margin-bottom:2em;"> 
+  <div fxLayout="column" fxFlex="50" >
+    <p><span>Verified By: </span> {{requests[0]?.maker?.fullName | titlecase}}</p>
+  </div>
+  <div fxLayout="column" fxFlex="50" >
+    <p><span >Received By: </span> {{requests[0]?.receivedBy?.fullName | titlecase}}</p>
+  </div>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="start center">
+  <div fxLayout="column" fxFlex="50">
+    <h2>Request Information</h2>
+    <mat-divider style="margin-bottom: 1em;width: 80%;"></mat-divider>
+    <p style="font-weight: 500;font-size: 14px;">Request Type: <span style="color: brown;"> {{requests[0]?.requestType }}</span></p>
+    <p style="font-weight: 600;font-size:14px;font-family:monospace;">Phone Number: <span style="color: black;font-weight: 300;"> {{requests[0]?.telephone }}</span></p>
+    <p><span style="font-weight: 500;">Approved By: </span> {{requests[0]?.approvedBy | titlecase}}</p>
+
+  </div>
+  <div fxLayout="column" fxFlex="50">
+    <h2>Request </h2>
+    <mat-divider style="margin-bottom: 1em;width: 80%;"></mat-divider>
+    <p style="font-weight: 500;">Maker Branch Code: <span style="color: brown;"> {{requests[0]?.maker?.branch?.code | titlecase}}</span></p>
+    <p><span style="font-weight: 500;">Maker Branch Name: </span> {{requests[0]?.maker?.branch?.name | titlecase}}</p>
+    <p style="font-weight: 600;">Acknowledged By: <span> {{requests[0]?.acknowledgedBy | titlecase}}</span></p>
+
+  </div>
+</div>
+
+</div>
+
+<div *ngIf="(requests[0]?.requestType === 'NOT_FOUND_ON_SETTLEMENT')" class="printable">
+<div id="print-section">
+<div class="details" fxLayout="row" fxLayoutAlign="center center" >
+    <div fxLayout="row">
+        <div fxLayout="column" fxLayoutAlign="center center" style="line-height: -0.4;">
+            <h2 >ENAT BANK S.C</h2>
+            <h3 style="margin-top: -0.5em;">E-BANKING</h3>
+            <h4 style="margin-top: -0.5em;">Transaction Dispute Form</h4>
+        </div>
+    </div>
+
+</div>
+
+<div fxLayout="row" fxLayoutAlign="start center" style="margin-top: 2em;margin-bottom: 2em;">
+  <div fxLayout="column" fxFlex="50" >
+    <div fxLayout="row" *ngIf="requests[0]?.requestType === 'ENAT_ON_OTHER_BANK'">
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Fe Number: </span> {{requests[0].feNumber }}</p>
+    </div>
+    <div fxLayout="row" *ngIf="requests[0]?.requestType === 'ENAT_ON_OTHER_BANK'">
+
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Dispute Id: </span> {{requests[0].disputeId }}</p>
+    </div>
+  </div>
+  <div fxLayout="column" fxFlex="50" >
+    <div fxLayout="row" style="text-align: right;justify-content:flex-end;">
+      <p style="margin-right: 2em;"><span style="font-weight: 600;">Case Opened On: </span> {{requests[0].createdAt | date:'mediumDate'}}</p>
+    </div>
+  </div>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 1em;">
+<div fxLayout="column" fxFlex="50">
+  <table class="mat-table">
+    <thead>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Card Holder:</th>
+        <td class="mat-cell" style="width: 400px;">
+          {{requests[0].cardHolderName | titlecase}}
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell" style="width: 200px;">Card No:</th>
+        <td class="mat-cell" style="width: 350px;">
+          {{requests[0]?.cardNumber}}
+        </td>
+      </tr>
+    </tbody>  
+      </table>
+      <table class="mat-table">
+
+    <thead>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Account Number:</th>
+        <td class="mat-cell" >
+          {{requests[0]?.accountNumber}}
+        </td>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="height: 30px;">
+        <th class="mat-header-cell">Address:</th>
+        <td class="mat-cell" >
+          {{requests[0]?.address}}
+        </td>
+      </tr>
+    </tbody>
+      </table>
+</div>
+
+<div fxLayout="column" fxFlex="50">
+  <table class="mat-table">
+  <thead>
+    <tr style="height: 30px;">
+      <th class="mat-header-cell">Transacion Date :</th>
+      <td class="mat-cell" >
+       {{requests[0]?.transactionDate | date : 'mediumDate'}}
+      </td>
+      
+    </tr>
+  </thead>
+  
+  <tbody>
+    <tr style="height: 30px;">
+      <th class="mat-header-cell">Bank | ATM:</th>
+      <td class="mat-cell" >
+       {{requests[0]?.bankTerminal?.name | titlecase}}
+      </td>
+    </tr>
+  </tbody>
+  
+</table>
+<table  class="mat-table">
+  <tbody>
+    <tr style="height: 30px;">
+      <th class="mat-header-cell">Transaction Time:</th>
+      <td class="mat-cell" >
+        Not provided
+      </td>
+    </tr>
+  </tbody>
+  <thead>
+    <tr style="height: 30px;">
+      <th class="mat-header-cell">Transaction Amount:</th>
+      <td class="mat-cell" >
+        <span style="border: brown !important;">
+          {{requests[0]?.transactionAmount | currency : 'ETB '}}
+        </span>
+      </td>
+    </tr>
+  </thead>
+</table>
+</div>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 4em;margin-bottom:2em;"> 
+  <div fxLayout="column" fxFlex="50" >
+    <p><span style="font-weight: 600;">Verified By: </span> {{requests[0]?.maker?.fullName | titlecase}}</p>
+  </div>
+  <div fxLayout="column" fxFlex="50" >
+    <p><span style="font-weight: 600;">Received By: </span> {{requests[0]?.receivedBy?.fullName | titlecase}}</p>
+  </div>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 2em;margin-bottom:2em;" > 
+  <div style="width:80%">
+    <h2>Feedback Histories</h2>
+    <hr>
+    <div class="search-results"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    [scrollWindow]="false"
+    (scrolled)="onScrollDown()">
+      <span *ngFor="let comment of comments">
+        <div style="background-color: #E0E0E0;height: fit-content;margin-bottom:1em;border-radius: 4px;">
+          <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;color: #0277BD;">
+            {{comment?.senderId | titlecase}}</p>
+          <p style="padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;">{{comment.content}}</p>
+          <div fxLayout="row">
+            <p fxLayout="row" style="color:#546E7A;padding-left: 1.5em;padding-top:10px;margin-bottom: 0em;" *ngIf="comment?.status === 'delivered'">
+              delivered<mat-icon inline style="margin-left: 0.5em;">done</mat-icon>
+            </p>
+            <p fxLayout="row" style="color:#2e7d32;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;" *ngIf="comment?.status === 'seen'">
+              Seen<mat-icon inline style="margin-left: 0.5em;">done_all</mat-icon>
+            </p>
+            <p style="color:#ad1457;padding-left: 1.5em;padding-top:10px;margin-bottom: 0.5em;">{{comment?.lastModifiedDate | date : 'mediumDate'}}</p>
+            <!-- <button style="color: #0277BD" *ngIf="comments" mat-button color="default"
+              (click)="onReplyingToComment()">Edit</button> -->
+          
+          </div>
+   
+        </div>
+      </span>
+      <!-- <mat-spinner class="center" diameter="40" color="accent" *ngIf="isInfiniteScrollLoading"></mat-spinner> -->
+
+    </div>
+    <div fxLayout="row" style="flex: 1 1 auto">
+      <mat-divier></mat-divier>
+    </div>
+  </div>
+
+</div>
+
+</div>
+</div>

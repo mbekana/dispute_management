@@ -1,0 +1,35 @@
+.initiation{
+    background-color: #198754;
+    color: white;
+    height: fit-content;
+    padding:4px;
+    border-radius: 2px;
+  }
+  
+  
+  .processing{
+    background-color: #FFA726;
+    color: white;
+    height: fit-content;
+    padding:4px;
+  
+    border-radius: 2px;
+  }
+  
+  .closed{
+    background-color: #dc3545;
+    color: white;
+    height: fit-content;
+    padding:4px;
+    border-radius: 2px;
+  }
+  
+  :host ::ng-deep .mat-table { 
+    align-items: left;
+    align-content: left;
+    justify-content: left;
+}
+  /* .mat-table{
+    align-items: left;
+  
+  } */

@@ -1,0 +1,198 @@
+<mat-toolbar color="primary" class="py-5 mb-4" style="width: 100%;display: flex;height: 5.5em;">
+
+    <span>
+        <h2>Create Direct Request</h2>
+    </span>
+    <span class="example-spacer"></span>
+
+</mat-toolbar>
+
+<div fxLayout="row">
+    <div fxLayout="column" fxFlex="50%" >
+        <div fxLayoutAlign="center center" >
+    
+            <form class="example-form" style="margin-top: 2em;"  id="container"[formGroup]="otherBankDisputeForm" (ngSubmit)="onSubmit()">
+                <mat-form-field *ngIf="isAddMode" class="example-full-width" appearance="fill" style="margin-bottom: 1em;width: 100%;">
+                    <mat-icon matPrefix style="color: #00695c;font-size:20px;font-weight: 600;">add</mat-icon>  <input matInput disabled value="Register Other Bank Disputes" style="color: #00695c;font-size:18px;font-weight: 600;">
+                  </mat-form-field>
+                  <mat-divider *ngIf="isAddMode" style="margin-top: -2.3em;margin-bottom:1em;"></mat-divider>
+        
+                  <mat-form-field *ngIf="!isAddMode" class="example-full-width" appearance="fill" style="margin-bottom: 1em;width: 100%;">
+                    <mat-icon matPrefix style="color: #00695c;font-size:20px;font-weight: 600;">edit</mat-icon> 
+                    <input matInput disabled value="Edit Direct Request" style="color: #00695c;font-size:18px;font-weight: 600;">
+                  </mat-form-field>
+                  <mat-divider *ngIf="!isAddMode" style="margin-top: -2.3em;margin-bottom:1em;"></mat-divider>
+        
+                <mat-form-field appearance="fill" style="width: 50%;">
+                    <mat-label>Issuer Bank</mat-label>
+                    <mat-select formControlName="issuerBank" [compareWith]="compareFn" style="width: 100%;" (infiniteScroll)="onScrollDown()" [complete]="pageNumber === (options$ | async)?.length" msInfiniteScroll>
+                        <mat-option *ngFor="let option of options$ | async" [value]="option">{{option?.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+        
+        
+                <table class="example-full-width" cellspacing="0" style="width: 100%;">
+                    <tr  fxLayout="row">
+                        <td style="width: 100%;" fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Acquirer Bank</mat-label>
+                                <mat-select formControlName="acquirerBank" [compareWith]="compareFn" style="width: 100%;" (infiniteScroll)="onScrollDown()" [complete]="pageNumber === (options$ | async)?.length" msInfiniteScroll>
+                                    <mat-option *ngFor="let option of options$ | async" [value]="option">{{option?.name}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Card Number</mat-label>
+                                <input matInput formControlName="cardNumber">
+                            </mat-form-field>
+                        </td>
+                    </tr>
+                </table>
+        
+                <table style="width:100%">
+                    <tr fxLayout="row">
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Amount</mat-label>
+                                <input matInput formControlName="amount">
+                            </mat-form-field>
+                        </td>
+                        <td fxLayout="column" fxFlex="50%">
+                    
+                        </td>
+                    </tr>
+                </table>
+        
+                <table  cellspacing="0" style="width:100%;">
+                    <tr fxLayout="row">
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Transaction Date</mat-label>
+                                <input matInput formControlName="transactionDate" [matDatepicker]="datepicker">
+                                <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                                <mat-datepicker #datepicker></mat-datepicker>
+                            </mat-form-field>
+                        </td>
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Ej Status</mat-label>
+                                <input matInput formControlName="ejStatus" placeholder="Transacion Description">
+                            </mat-form-field>
+                        </td>
+                    </tr>
+                </table>
+        
+                <mat-form-field class="example-full-width" appearance="fill" style="width: 100%">
+                    <mat-label>Terminal Id</mat-label>
+                    <input matInput formControlName="terminalId">
+                </mat-form-field>
+        
+                <table  cellspacing="0" style="width:100%;">
+                    <tr fxLayout="row">
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Fe Number</mat-label>
+                                <input matInput formControlName="feNumber" />
+                            </mat-form-field>
+                        </td>
+                        <td fxLayout="column" fxFlex="50%">
+                            <mat-form-field class="example-full-width" appearance="fill" style="width: 100%;">
+                                <mat-label>Dispute Id</mat-label>
+                                <input matInput formControlName="disputeId">
+                            </mat-form-field>
+                        </td>
+                    </tr>
+                </table>
+        
+                <button mat-raised-button color="primary" style="width: 100%;" [disabled]="otherBankDisputeForm?.invalid || otherBankDisputeForm.pristine">Save Request</button>
+            </form>
+        
+        </div>
+    </div>
+    <div fxLayout="column" fxFlex="50%" >
+        <div fxLayoutAlign="center center" style="margin-right: auto;width:400px; ">
+        <div style="width:100%;height: fit-content;">
+            <div style="width: 100%;">
+                <div>
+                  <div >
+                    <h2 class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="text-primary">Important Details</span>
+                    </h2>
+                    <ul class="list-group mb-3">
+                      <li class="
+                          list-group-item
+                          d-flex
+                          justify-content-between
+                          lh-condensed
+                        ">
+                        <div>
+                          <h6 class="my-0">Issuer Bank</h6>
+                          <small class="text-muted"><code>{{ otherBankDisputeForm.get('issuerBank')?.value?.name  }}</code></small>
+                        </div>
+                        <span class="text-primary">
+                          <mat-icon aria-hidden="false" aria-label="Example home icon">domain</mat-icon>
+                        </span>
+                      </li>
+                      <li class="
+                          list-group-item
+                          d-flex
+                          justify-content-between
+                          lh-condensed
+                        ">
+                        <div>
+                          <h6 class="my-0">Acquirer Bank</h6>
+                          <small class="text-muted"><code>{{ otherBankDisputeForm.get('acquirerBank')?.value?.name  }}</code></small>
+                        </div>
+                        <span class="text-primary">
+                          <mat-icon aria-hidden="false" aria-label="Example home icon">domain</mat-icon>
+                        </span>
+                      </li>
+                      <li class="
+                          list-group-item
+                          d-flex
+                          justify-content-between
+                          lh-condensed
+                        ">
+                        <div>
+                          <h6 class="my-0">Card Number</h6>
+                          <small class="text-muted"><code>
+                              {{ otherBankDisputeForm.get('cardNumber')?.value  }}</code></small>
+                        </div>
+                        <span class="text-primary">
+                          <mat-icon aria-hidden="false" aria-label="Example home icon">credit_card</mat-icon>
+                        </span>
+                      </li>
+                      <li class="
+                          list-group-item
+                          d-flex
+                          justify-content-between
+                          bg-light
+                        ">
+                        <div class="text-primary">
+                          <h6 class="my-0">Ampount</h6>
+                          <small><code>ETB  {{ otherBankDisputeForm.get('amount')?.value | number: "1.2-2" }}</code></small>
+                        </div>
+                        <span class="text-primary">
+                          <mat-icon aria-hidden="false" aria-label="Example home icon">phone</mat-icon>
+                        </span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="text-primary">
+                            <h6 class="my-0">Transaction Date</h6>
+                            <small><code>{{ otherBankDisputeForm.get('transactionDate')?.value | date:'mediumDate' }}</code></small>
+                          </div>
+                          <span class="text-primary">
+                            <mat-icon aria-hidden="false" aria-label="Example home icon">phone</mat-icon>
+                          </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                </div>
+              </div>
+        </div>
+        </div>
+    </div>
+</div>
